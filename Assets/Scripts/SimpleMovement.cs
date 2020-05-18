@@ -17,11 +17,23 @@ public class SimpleMovement : MonoBehaviour
 	private bool forward;
 
 	private bool moving;
-	private int facing;
+	private int facing; // 0 for +X, 3 for -X
 	private float destX;
 	private float destZ;
+	private float cooldown;
 
 	public float hexRadius;
+	public float rotateInterval;
+	public float rotateCooldown = 0;
+
+	public int mode; // 0 for explore, 1 for maze
+
+	public KeyCode left;
+	private int leftFacing;
+	public KeyCode right;
+	private int rightFacing;
+
+	public GameObject prevHex;
 
 	// Start is called before the first frame update
 	void Start()
@@ -35,9 +47,28 @@ public class SimpleMovement : MonoBehaviour
 		Vector3 move = Vector3.zero;
 		Vector3 rotate = Vector3.zero;
 
-		if(Input.GetAxis("Vertical") > 0.1f && !moving)
+		// Check movement input
+		if(mode == 0 && !moving)
 		{
-			StartMove();
+			if(Input.GetAxis("Vertical") > 0.1f)
+			{
+				// Find movement angle
+				facing = (int) ((480 - cc.transform.eulerAngles.y) / 60) % 6;
+				StartMove();
+			}
+		}
+		else if(mode == 1 && !moving)
+		{
+			if(Input.GetKey(left) && !Input.GetKey(right))
+			{
+				facing = leftFacing;
+				StartMove();
+			}
+			else if(Input.GetKey(right) && !Input.GetKey(left))
+			{
+				facing = rightFacing;
+				StartMove();
+			}
 		}
 
 		/*
@@ -60,9 +91,20 @@ public class SimpleMovement : MonoBehaviour
 		}
 		*/
 
-		// Determine rotation
-		rotate += Time.deltaTime * Input.GetAxis("Horizontal") * rotSpeed * 
-			Vector3.up;
+		// Check rotation input
+		if(cooldown > 0)
+			cooldown -= Time.deltaTime;
+
+		if(Input.GetAxis("Horizontal") > 0.1f && cooldown <= 0)
+		{
+			rotate += rotateInterval * Vector3.up;
+			cooldown = rotateCooldown;
+		}
+		else if(Input.GetAxis("Horizontal") < -0.1f && cooldown <= 0)
+		{
+			rotate -= rotateInterval * Vector3.up;
+			cooldown = rotateCooldown;
+		}
 
 		// Determine if at destination
 		if(moving)
@@ -132,9 +174,6 @@ public class SimpleMovement : MonoBehaviour
 	{
 		moving = true;
 
-		// Find movement angle
-		facing = (int) ((480 - cc.transform.eulerAngles.y) / 60) % 6;
-
 		// Find final x coord
 		switch(facing)
 		{
@@ -167,6 +206,22 @@ public class SimpleMovement : MonoBehaviour
 	{
 		Vector3 pos = new Vector3(destX, cc.transform.position.y, destZ);
 		cc.transform.position = pos;
+	}
+
+	public void SetChoices(int left, int right)
+	{
+		leftFacing = left;
+		rightFacing = right;
+	}
+
+	public void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		if(hit.gameObject.GetInstanceID() != prevHex.GetInstanceID())
+		{
+			hit.gameObject.SendMessage("Enter", gameObject);
+			prevHex.SendMessage("Exit", gameObject);
+			prevHex = hit.gameObject;
+		}
 	}
 
 }

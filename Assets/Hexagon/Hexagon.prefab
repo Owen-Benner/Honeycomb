@@ -1,5 +1,64 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!64 &2793424837225859766
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426041716436268583}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_Mesh: {fileID: -2432090755550338912, guid: 1810a6a21f60298c8bf51a1867b19661, type: 3}
+--- !u!114 &8305162114804542718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426041716436268583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747fa41e4d56e4ff68875c9522cbf807, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftRing: {fileID: 0}
+  leftFacing: 0
+  rightRing: {fileID: 0}
+  rightFacing: 0
+--- !u!64 &2793424837586085403
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426041717131958912}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_Mesh: {fileID: -2432090755550338912, guid: 336757c62c0588434b79d5fb20991b1e, type: 3}
+--- !u!114 &7701273623310691063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426041717131958912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c7f2a1e9c0e13488d07bb8ac23974e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  left: {fileID: 2100000, guid: 8c19a618a0bd9844583b91dca0875a34, type: 2}
+  right: {fileID: 2100000, guid: 6e1d36c4bbd37d54f9ea183e4f5fd656, type: 2}
+  gray: {fileID: 2100000, guid: 1032d41f900276c40a9dd24f55b7d420, type: 2}
 --- !u!1 &2793424837218825705
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,34 +91,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &2793424837225859766
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 426041716436268583}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: -2432090755550338912, guid: 1810a6a21f60298c8bf51a1867b19661, type: 3}
---- !u!64 &2793424837586085403
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 426041717131958912}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: -2432090755550338912, guid: 336757c62c0588434b79d5fb20991b1e, type: 3}
 --- !u!1001 &2793424837225859763
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71,6 +102,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HexCenter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534866581884222612, guid: 1810a6a21f60298c8bf51a1867b19661,
+        type: 3}
+      propertyPath: m_Name
+      value: Center
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 1810a6a21f60298c8bf51a1867b19661,
         type: 3}
@@ -127,16 +163,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2834078683115760881, guid: 1810a6a21f60298c8bf51a1867b19661,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -9156896195263898451, guid: 82ca4dcb8bda22beabdcdf152073f0d9,
+        type: 3}
     - target: {fileID: -2416733968201007103, guid: 1810a6a21f60298c8bf51a1867b19661,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 76ff537c8e1a84345868e6aeee938ab3, type: 2}
-    - target: {fileID: 2534866581884222612, guid: 1810a6a21f60298c8bf51a1867b19661,
-        type: 3}
-      propertyPath: m_Name
-      value: Center
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 1032d41f900276c40a9dd24f55b7d420, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1810a6a21f60298c8bf51a1867b19661, type: 3}
 --- !u!4 &7187333617612251561 stripped
@@ -163,6 +200,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HexRing
       objectReference: {fileID: 0}
+    - target: {fileID: 2534866581884222612, guid: 336757c62c0588434b79d5fb20991b1e,
+        type: 3}
+      propertyPath: m_Name
+      value: Ring
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 336757c62c0588434b79d5fb20991b1e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -218,16 +260,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2834078683115760881, guid: 336757c62c0588434b79d5fb20991b1e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 2404180919030330786, guid: 76d73a4862f421a7389c935c1c14a612,
+        type: 3}
     - target: {fileID: -2416733968201007103, guid: 336757c62c0588434b79d5fb20991b1e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 8c19a618a0bd9844583b91dca0875a34, type: 2}
-    - target: {fileID: 2534866581884222612, guid: 336757c62c0588434b79d5fb20991b1e,
-        type: 3}
-      propertyPath: m_Name
-      value: Ring
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: fed4e78bda2b3de45954637fee164b8c, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 336757c62c0588434b79d5fb20991b1e, type: 3}
 --- !u!4 &7187333617990487310 stripped
