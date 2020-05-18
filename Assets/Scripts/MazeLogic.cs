@@ -9,6 +9,7 @@ public class MazeLogic : MonoBehaviour
 	public int leftFacing;
 	public GameObject rightRing;
 	public int rightFacing;
+	public GameObject thisRing;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,11 @@ public class MazeLogic : MonoBehaviour
 	{
 		leftRing.GetComponent<Highlighter>().Reset();
 		rightRing.GetComponent<Highlighter>().Reset();
+	}
+
+	void SetGoal()
+	{
+		thisRing.GetComponent<Highlighter>().SetGoal();
 	}
 
 }

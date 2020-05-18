@@ -8,11 +8,17 @@ public class Highlighter : MonoBehaviour
 	public Material left;
 	public Material right;
 	public Material gray;
+	public Material explore;
+	public Material goal;
 
     // Start is called before the first frame update
     void Start()
     {
-        Reset();
+		if(GameObject.FindWithTag("Player").GetComponent<SimpleMovement>().
+			mode == 1)
+		{
+			Reset();
+		}
     }
 
     // Update is called once per frame
@@ -34,6 +40,16 @@ public class Highlighter : MonoBehaviour
 	public void Reset()
 	{
 		GetComponent<MeshRenderer>().material = gray;
+	}
+
+	public void SetExplore()
+	{
+		GetComponent<MeshRenderer>().material = explore;
+	}
+
+	public void SetGoal()
+	{
+		GetComponent<MeshRenderer>().material = goal;
 	}
 
 }
