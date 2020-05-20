@@ -35,6 +35,8 @@ public class SimpleMovement : MonoBehaviour
 
 	public GameObject prevHex;
 
+	public GameObject goalHex;
+
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -216,8 +218,13 @@ public class SimpleMovement : MonoBehaviour
 
 	public void OnControllerColliderHit(ControllerColliderHit hit)
 	{
-		if(hit.gameObject.GetInstanceID() != prevHex.GetInstanceID())
+		if(hit.gameObject.GetInstanceID() != prevHex.GetInstanceID() &&
+			mode == 1)
 		{
+			if(hit.gameObject.GetInstanceID() == goalHex.GetInstanceID())
+			{
+				
+			}
 			hit.gameObject.SendMessage("Enter", gameObject);
 			prevHex.SendMessage("Exit", gameObject);
 			prevHex = hit.gameObject;
