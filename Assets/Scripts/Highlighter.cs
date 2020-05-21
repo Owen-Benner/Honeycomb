@@ -19,6 +19,10 @@ public class Highlighter : MonoBehaviour
 		{
 			Reset();
 		}
+		else
+		{
+			SetExplore();
+		}
     }
 
     // Update is called once per frame

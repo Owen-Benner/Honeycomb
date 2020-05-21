@@ -17,7 +17,7 @@ public class SimpleMovement : MonoBehaviour
 	private bool forward;
 
 	private bool moving;
-	private int facing; // 0 for +X, 3 for -X
+	private int facing; // 0 for +Z, 3 for -Z
 	private float destX;
 	private float destZ;
 	private float cooldown;
@@ -55,7 +55,7 @@ public class SimpleMovement : MonoBehaviour
 			if(Input.GetAxis("Vertical") > 0.1f)
 			{
 				// Find movement angle
-				facing = (int) ((480 - cc.transform.eulerAngles.y) / 60) % 6;
+				facing = Mathf.RoundToInt(cc.transform.eulerAngles.y / 60);
 				StartMove();
 			}
 		}
@@ -112,14 +112,14 @@ public class SimpleMovement : MonoBehaviour
 		if(moving)
 		{
 			float angle = (float) facing * 60;
-			move += Time.deltaTime * moveSpeed * (float) Math.Cos(angle *
-				Mathf.Deg2Rad) * Vector3.right;
 			move += Time.deltaTime * moveSpeed * (float) Math.Sin(angle *
+				Mathf.Deg2Rad) * Vector3.right;
+			move += Time.deltaTime * moveSpeed * (float) Math.Cos(angle *
 				Mathf.Deg2Rad) * Vector3.forward;
 
-			if(facing == 0 || facing == 1 || facing == 5 || facing == 6)
+			if(facing == 5 || facing == 6 || facing == 0 || facing == 1)
 			{
-				if(cc.transform.position.x > destX)
+				if(cc.transform.position.z > destZ)
 				{
 					SnapPos();
 					moving = false;
@@ -127,7 +127,7 @@ public class SimpleMovement : MonoBehaviour
 			}
 			else if(facing == 2 || facing == 3 || facing == 4)
 			{
-				if(cc.transform.position.x < destX)
+				if(cc.transform.position.z < destZ)
 				{
 					SnapPos();
 					moving = false;
@@ -181,18 +181,18 @@ public class SimpleMovement : MonoBehaviour
 		{
 			case 0:
 			case 6:
-				destX = cc.transform.position.x + hexRadius;
+				destZ = cc.transform.position.z + hexRadius;
 				break;
 			case 1:
 			case 5:
-				destX = cc.transform.position.x + hexRadius / 2;
+				destZ = cc.transform.position.z + hexRadius / 2;
 				break;
 			case 2:
 			case 4:
-				destX = cc.transform.position.x - hexRadius / 2;
+				destZ = cc.transform.position.z - hexRadius / 2;
 				break;
 			case 3:
-				destX = cc.transform.position.x - hexRadius;
+				destZ = cc.transform.position.z - hexRadius;
 				break;
 			default:
 				Debug.LogError("Invalid facing: " + facing);
@@ -200,7 +200,7 @@ public class SimpleMovement : MonoBehaviour
 		}
 
 		// Find final z coord
-		destZ = cc.transform.position.z + hexRadius * (float) Math.Sin((float)
+		destX = cc.transform.position.x + hexRadius * (float) Math.Sin((float)
 			facing * 60 * Mathf.Deg2Rad);
 	}
 
