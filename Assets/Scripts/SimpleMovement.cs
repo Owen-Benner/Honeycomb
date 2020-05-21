@@ -34,13 +34,45 @@ public class SimpleMovement : MonoBehaviour
 	private int rightFacing;
 
 	public GameObject prevHex;
-
 	public GameObject goalHex;
+
+	public GameObject [] col0;
+	public GameObject [] col1;
+	public GameObject [] col2;
+	public GameObject [] col3;
+	public GameObject [] col4;
+	public GameObject [] col5;
+	public GameObject [] col6;
+
+	public GameObject [,] maze;
+
+	public int [] alphas;
+	public int [] betas;
+
+	public int moveCounter;
+
+	public int column;
+	public int row;
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		cc = GetComponent<CharacterController>();
+		maze = new GameObject [7,7];
+		for(int i = 0; i < 7; ++i)
+			maze[0,i] = col0[i];
+		for(int i = 0; i < 7; ++i)
+			maze[1,i] = col1[i];
+		for(int i = 0; i < 7; ++i)
+			maze[2,i] = col2[i];
+		for(int i = 0; i < 7; ++i)
+			maze[3,i] = col3[i];
+		for(int i = 0; i < 7; ++i)
+			maze[4,i] = col4[i];
+		for(int i = 0; i < 7; ++i)
+			maze[5,i] = col5[i];
+		for(int i = 0; i < 7; ++i)
+			maze[6,i] = col6[i];
 	}
 
 	// Update is called once per frame
@@ -55,8 +87,12 @@ public class SimpleMovement : MonoBehaviour
 			if(Input.GetAxis("Vertical") > 0.1f)
 			{
 				// Find movement angle
+				// TODO: Fix facing of 6?
 				facing = Mathf.RoundToInt(cc.transform.eulerAngles.y / 60);
-				StartMove();
+				if(prevHex.GetComponent<HexLogic>().edges[facing % 6])
+				{
+					StartMove();
+				}
 			}
 		}
 		else if(mode == 1 && !moving)
@@ -210,24 +246,93 @@ public class SimpleMovement : MonoBehaviour
 		cc.transform.position = pos;
 	}
 
-	public void SetChoices(int left, int right)
+	public void SetChoices()
 	{
-		leftFacing = left;
-		rightFacing = right;
+		leftFacing = alphas[moveCounter];
+		rightFacing = leftFacing + betas[moveCounter];
+		if(rightFacing < leftFacing)
+		{
+			int temp = leftFacing;
+			leftFacing = rightFacing;
+			rightFacing = temp;
+		}
+		leftFacing %= 6;
+		rightFacing %= 6;
+
+		switch(leftFacing)
+		{
+			case 0:
+			case 6:
+				maze[column, row + 1].BroadcastMessage("SetLeft");
+				break;
+			case 1:
+				maze[column + 1, row + 1].BroadcastMessage("SetLeft");
+				break;
+			case 2:
+				maze[column + 1, row].BroadcastMessage("SetLeft");
+				break;
+			case 3:
+				maze[column, row - 1].BroadcastMessage("SetLeft");
+				break;
+			case 4:
+				maze[column - 1, row - 1].BroadcastMessage("SetLeft");
+				break;
+			case 5:
+				maze[column - 1, row].BroadcastMessage("SetLeft");
+				break;
+			default:
+				Debug.LogError("Invalid facing: " + facing);
+				break;
+		}
+		switch(rightFacing)
+		{
+			case 0:
+			case 6:
+				maze[column, row + 1].BroadcastMessage("SetRight");
+				break;
+			case 1:
+				maze[column + 1, row + 1].BroadcastMessage("SetRight");
+				break;
+			case 2:
+				maze[column + 1, row].BroadcastMessage("SetRight");
+				break;
+			case 3:
+				maze[column, row - 1].BroadcastMessage("SetRight");
+				break;
+			case 4:
+				maze[column - 1, row - 1].BroadcastMessage("SetRight");
+				break;
+			case 5:
+				maze[column - 1, row].BroadcastMessage("SetRight");
+				break;
+			default:
+				Debug.LogError("Invalid facing: " + facing);
+				break;
+		}
 	}
 
 	public void OnControllerColliderHit(ControllerColliderHit hit)
 	{
-		if(hit.gameObject.GetInstanceID() != prevHex.GetInstanceID() &&
-			mode == 1)
+		//Debug.Log("hit");
+		if(hit.gameObject.CompareTag("HexCenter"))
 		{
-			if(hit.gameObject.GetInstanceID() == goalHex.GetInstanceID())
+			//Debug.Log("center");
+			GameObject hitObj = hit.transform.parent.parent.gameObject;
+			if(hitObj.GetInstanceID() != prevHex.GetInstanceID())
 			{
-				
+				prevHex = hitObj;
+				if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
+					mode == 1)
+				{
+					hitObj.BroadcastMessage("SetGoal");
+				}
+				else
+				{
+					SetChoices();
+				}
+				//hit.gameObject.SendMessage("Enter", gameObject);
+				//prevHex.SendMessage("Exit", gameObject);
 			}
-			hit.gameObject.SendMessage("Enter", gameObject);
-			prevHex.SendMessage("Exit", gameObject);
-			prevHex = hit.gameObject;
 		}
 	}
 
