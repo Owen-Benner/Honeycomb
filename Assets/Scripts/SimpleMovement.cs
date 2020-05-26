@@ -89,16 +89,12 @@ public class SimpleMovement : MonoBehaviour
 				// Find movement angle
 				// TODO: Fix facing of 6?
 				facing = Mathf.RoundToInt(cc.transform.eulerAngles.y / 60);
+				facing = (facing + 6) % 6;
 
-				// TODO: Make try/catch specific to unassigned reference
-				try
+				if(curHex.GetComponent<HexLogic>().edges[facing])
 				{
-					if(curHex.GetComponent<HexLogic>().edges[facing % 6])
-					{
-						StartMove();
-					}
+					StartMove();
 				}
-				catch {}
 			}
 		}
 		else if(mode == 1 && !moving)
@@ -254,20 +250,36 @@ public class SimpleMovement : MonoBehaviour
 
 	public void SetChoices(int column, int row)
 	{
-		// TODO: Make try/catch specific to unassigned reference
-		try
+		// Calculate goalDir
+		Vector3 toGoal = goalHex.transform.position -
+			curHex.transform.position;
+		toGoal.y = 0;
+		goalDir = Mathf.RoundToInt(Vector3.SignedAngle(Vector3.forward,
+			toGoal, Vector3.up) / 60);
+		goalDir = (goalDir + 6) % 6;
+
+		// Find choice angles
+		// Currently the wrong choice is on the right if beta > 0, and on the
+		// left if beta < 0
+		if(betas[moveCounter] > 0)
 		{
-			leftHex.BroadcastMessage("Reset");
-			rightHex.BroadcastMessage("Reset");
+			leftFacing = goalDir + alphas[moveCounter];
+			rightFacing = leftFacing + betas[moveCounter];
 		}
-		catch {}
-
-		leftFacing = goalDir + alphas[moveCounter];
-		rightFacing = leftFacing + betas[moveCounter];
+		else if(betas[moveCounter] < 0)
+		{
+			rightFacing = goalDir + alphas[moveCounter];
+			leftFacing = rightFacing + betas[moveCounter];
+		}
+		else
+		{
+			Debug.LogError("beta cannot be zero!");
+		}
 		++moveCounter;
-		leftFacing %= 6;
-		rightFacing %= 6;
+		leftFacing = (leftFacing + 6) % 6;
+		rightFacing = (rightFacing + 6) % 6;
 
+		// Find choice hexes
 		switch(leftFacing)
 		{
 			case 0:
@@ -319,6 +331,7 @@ public class SimpleMovement : MonoBehaviour
 				break;
 		}
 
+		// Highlight
 		leftHex.BroadcastMessage("SetLeft");
 		rightHex.BroadcastMessage("SetRight");
 	}
@@ -329,31 +342,32 @@ public class SimpleMovement : MonoBehaviour
 		if(hit.gameObject.CompareTag("HexCenter"))
 		{
 			//Debug.Log("center");
-			GameObject hitObj = hit.transform.parent.parent.gameObject;
+			GameObject hitObj = hit.transform.parent.gameObject;
 
-			// TODO: Make try/catch specific to unassigned reference
-			try
+			// Check if new hex
+			if(hitObj.GetInstanceID() != curHex.GetInstanceID())
 			{
-				if(hitObj.GetInstanceID() != curHex.GetInstanceID())
+				curHex.BroadcastMessage("Reset");
+				curHex = hitObj;
+				
+				// Remove previous highlighting
+				leftHex.BroadcastMessage("Reset");
+				rightHex.BroadcastMessage("Reset");
+
+				if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
+					mode == 1)
 				{
-					curHex.BroadcastMessage("Reset");
-					curHex = hitObj;
-					if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
-						mode == 1)
-					{
-						hitObj.BroadcastMessage("SetGoal");
-					}
-					else
-					{
-						SetChoices(hitObj.GetComponent<HexLogic>().column,
-							hitObj.GetComponent<HexLogic>().row);
-						curHex.BroadcastMessage("SetGray");
-					}
-					//hit.gameObject.SendMessage("Enter", gameObject);
-					//curHex.SendMessage("Exit", gameObject);
+					hitObj.BroadcastMessage("SetGoal");
 				}
+				else
+				{
+					SetChoices(hitObj.GetComponent<HexLogic>().column,
+						hitObj.GetComponent<HexLogic>().row);
+					curHex.BroadcastMessage("SetGray");
+				}
+				//hit.gameObject.SendMessage("Enter", gameObject);
+				//curHex.SendMessage("Exit", gameObject);
 			}
-			catch {}
 		}
 	}
 

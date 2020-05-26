@@ -1502,8 +1502,8 @@ MonoBehaviour:
   - {fileID: 1930453687}
   - {fileID: 1373553311}
   - {fileID: 1048195924}
-  alphas: 0100000003000000010000000200000005000000
-  betas: 0100000006000000020000000100000003000000
+  alphas: 0000000000000000000000000000000000000000
+  betas: 0100000003000000fffffffffeffffff02000000
   moveCounter: 0
   goalDir: 0
 --- !u!1 &321921155 stripped
@@ -4672,6 +4672,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Convex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8697071367890897586, guid: a94fcc053b20918a78f7962838c8efdd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8697071367059678741, guid: a94fcc053b20918a78f7962838c8efdd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a94fcc053b20918a78f7962838c8efdd, type: 3}
