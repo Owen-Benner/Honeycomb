@@ -9,7 +9,7 @@ public class SimpleMovement : MonoBehaviour
 	private CharacterController cc;
 
 	public float moveSpeed;
-	public float rotSpeed;
+	//public float rotSpeed;
 	public float sinkSpeed;
 
 	private float hold;
@@ -33,8 +33,10 @@ public class SimpleMovement : MonoBehaviour
 	public KeyCode right;
 	private int rightFacing;
 
-	public GameObject prevHex;
+	public GameObject curHex;
 	public GameObject goalHex;
+	public GameObject leftHex;
+	public GameObject rightHex;
 
 	public GameObject [] col0;
 	public GameObject [] col1;
@@ -49,10 +51,8 @@ public class SimpleMovement : MonoBehaviour
 	public int [] alphas;
 	public int [] betas;
 
-	public int moveCounter;
-
-	public int column;
-	public int row;
+	public int moveCounter = 0;
+	public int goalDir = 0;
 
 	// Start is called before the first frame update
 	void Start()
@@ -89,10 +89,16 @@ public class SimpleMovement : MonoBehaviour
 				// Find movement angle
 				// TODO: Fix facing of 6?
 				facing = Mathf.RoundToInt(cc.transform.eulerAngles.y / 60);
-				if(prevHex.GetComponent<HexLogic>().edges[facing % 6])
+
+				// TODO: Make try/catch specific to unassigned reference
+				try
 				{
-					StartMove();
+					if(curHex.GetComponent<HexLogic>().edges[facing % 6])
+					{
+						StartMove();
+					}
 				}
+				catch {}
 			}
 		}
 		else if(mode == 1 && !moving)
@@ -246,16 +252,19 @@ public class SimpleMovement : MonoBehaviour
 		cc.transform.position = pos;
 	}
 
-	public void SetChoices()
+	public void SetChoices(int column, int row)
 	{
-		leftFacing = alphas[moveCounter];
-		rightFacing = leftFacing + betas[moveCounter];
-		if(rightFacing < leftFacing)
+		// TODO: Make try/catch specific to unassigned reference
+		try
 		{
-			int temp = leftFacing;
-			leftFacing = rightFacing;
-			rightFacing = temp;
+			leftHex.BroadcastMessage("Reset");
+			rightHex.BroadcastMessage("Reset");
 		}
+		catch {}
+
+		leftFacing = goalDir + alphas[moveCounter];
+		rightFacing = leftFacing + betas[moveCounter];
+		++moveCounter;
 		leftFacing %= 6;
 		rightFacing %= 6;
 
@@ -263,22 +272,22 @@ public class SimpleMovement : MonoBehaviour
 		{
 			case 0:
 			case 6:
-				maze[column, row + 1].BroadcastMessage("SetLeft");
+				leftHex = maze[column, row + 1];
 				break;
 			case 1:
-				maze[column + 1, row + 1].BroadcastMessage("SetLeft");
+				leftHex = maze[column + 1, row + 1];
 				break;
 			case 2:
-				maze[column + 1, row].BroadcastMessage("SetLeft");
+				leftHex = maze[column + 1, row];
 				break;
 			case 3:
-				maze[column, row - 1].BroadcastMessage("SetLeft");
+				leftHex = maze[column, row - 1];
 				break;
 			case 4:
-				maze[column - 1, row - 1].BroadcastMessage("SetLeft");
+				leftHex = maze[column - 1, row - 1];
 				break;
 			case 5:
-				maze[column - 1, row].BroadcastMessage("SetLeft");
+				leftHex = maze[column - 1, row];
 				break;
 			default:
 				Debug.LogError("Invalid facing: " + facing);
@@ -288,27 +297,30 @@ public class SimpleMovement : MonoBehaviour
 		{
 			case 0:
 			case 6:
-				maze[column, row + 1].BroadcastMessage("SetRight");
+				rightHex = maze[column, row + 1];
 				break;
 			case 1:
-				maze[column + 1, row + 1].BroadcastMessage("SetRight");
+				rightHex = maze[column + 1, row + 1];
 				break;
 			case 2:
-				maze[column + 1, row].BroadcastMessage("SetRight");
+				rightHex = maze[column + 1, row];
 				break;
 			case 3:
-				maze[column, row - 1].BroadcastMessage("SetRight");
+				rightHex = maze[column, row - 1];
 				break;
 			case 4:
-				maze[column - 1, row - 1].BroadcastMessage("SetRight");
+				rightHex = maze[column - 1, row - 1];
 				break;
 			case 5:
-				maze[column - 1, row].BroadcastMessage("SetRight");
+				rightHex = maze[column - 1, row];
 				break;
 			default:
 				Debug.LogError("Invalid facing: " + facing);
 				break;
 		}
+
+		leftHex.BroadcastMessage("SetLeft");
+		rightHex.BroadcastMessage("SetRight");
 	}
 
 	public void OnControllerColliderHit(ControllerColliderHit hit)
@@ -318,21 +330,30 @@ public class SimpleMovement : MonoBehaviour
 		{
 			//Debug.Log("center");
 			GameObject hitObj = hit.transform.parent.parent.gameObject;
-			if(hitObj.GetInstanceID() != prevHex.GetInstanceID())
+
+			// TODO: Make try/catch specific to unassigned reference
+			try
 			{
-				prevHex = hitObj;
-				if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
-					mode == 1)
+				if(hitObj.GetInstanceID() != curHex.GetInstanceID())
 				{
-					hitObj.BroadcastMessage("SetGoal");
+					curHex.BroadcastMessage("Reset");
+					curHex = hitObj;
+					if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
+						mode == 1)
+					{
+						hitObj.BroadcastMessage("SetGoal");
+					}
+					else
+					{
+						SetChoices(hitObj.GetComponent<HexLogic>().column,
+							hitObj.GetComponent<HexLogic>().row);
+						curHex.BroadcastMessage("SetGray");
+					}
+					//hit.gameObject.SendMessage("Enter", gameObject);
+					//curHex.SendMessage("Exit", gameObject);
 				}
-				else
-				{
-					SetChoices();
-				}
-				//hit.gameObject.SendMessage("Enter", gameObject);
-				//prevHex.SendMessage("Exit", gameObject);
 			}
+			catch {}
 		}
 	}
 
