@@ -1442,10 +1442,11 @@ MonoBehaviour:
   mode: 1
   left: 113
   right: 101
-  curHex: {fileID: 1462117135}
-  goalHex: {fileID: 2102020036}
+  curHex: {fileID: 72339456}
+  prevHex: {fileID: 1462117135}
   leftHex: {fileID: 1462117135}
   rightHex: {fileID: 1462117135}
+  goalHex: {fileID: 2102020036}
   col0:
   - {fileID: 1741463894}
   - {fileID: 1760994390}

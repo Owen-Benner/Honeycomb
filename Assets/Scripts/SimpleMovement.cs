@@ -34,9 +34,10 @@ public class SimpleMovement : MonoBehaviour
 	private int rightFacing;
 
 	public GameObject curHex;
-	public GameObject goalHex;
+	public GameObject prevHex;
 	public GameObject leftHex;
 	public GameObject rightHex;
+	public GameObject goalHex;
 
 	public GameObject [] col0;
 	public GameObject [] col1;
@@ -73,6 +74,8 @@ public class SimpleMovement : MonoBehaviour
 			maze[5,i] = col5[i];
 		for(int i = 0; i < 7; ++i)
 			maze[6,i] = col6[i];
+
+		UpdateHexes();
 	}
 
 	// Update is called once per frame
@@ -161,6 +164,8 @@ public class SimpleMovement : MonoBehaviour
 				{
 					SnapPos();
 					moving = false;
+					if(mode == 1)
+						UpdateHexes();
 				}
 			}
 			else if(facing == 2 || facing == 3 || facing == 4)
@@ -169,6 +174,8 @@ public class SimpleMovement : MonoBehaviour
 				{
 					SnapPos();
 					moving = false;
+					if(mode == 1)
+						UpdateHexes();
 				}
 			}
 			else { Debug.LogError("Invalid facing: " + facing); }
@@ -347,27 +354,31 @@ public class SimpleMovement : MonoBehaviour
 			// Check if new hex
 			if(hitObj.GetInstanceID() != curHex.GetInstanceID())
 			{
-				curHex.BroadcastMessage("Reset");
+				// Switch to new hex
+				prevHex = curHex;
 				curHex = hitObj;
-				
-				// Remove previous highlighting
-				leftHex.BroadcastMessage("Reset");
-				rightHex.BroadcastMessage("Reset");
-
-				if(hitObj.GetInstanceID() == goalHex.GetInstanceID() &&
-					mode == 1)
-				{
-					hitObj.BroadcastMessage("SetGoal");
-				}
-				else
-				{
-					SetChoices(hitObj.GetComponent<HexLogic>().column,
-						hitObj.GetComponent<HexLogic>().row);
-					curHex.BroadcastMessage("SetGray");
-				}
-				//hit.gameObject.SendMessage("Enter", gameObject);
-				//curHex.SendMessage("Exit", gameObject);
 			}
+		}
+	}
+
+	private void UpdateHexes()
+	{
+		//Debug.Log("Updating");
+
+		// Remove previous highlighting
+		prevHex.BroadcastMessage("Reset");
+		leftHex.BroadcastMessage("Reset");
+		rightHex.BroadcastMessage("Reset");
+
+		if(curHex.GetInstanceID() == goalHex.GetInstanceID() && mode == 1)
+		{
+			curHex.BroadcastMessage("SetGoal");
+		}
+		else
+		{
+			SetChoices(curHex.GetComponent<HexLogic>().column,
+				curHex.GetComponent<HexLogic>().row);
+			curHex.BroadcastMessage("SetGray");
 		}
 	}
 
