@@ -1439,74 +1439,10 @@ MonoBehaviour:
   hexRadius: 10
   rotateInterval: 20
   rotateCooldown: 0.33
-  mode: 1
   left: 113
   right: 101
-  curHex: {fileID: 72339456}
-  prevHex: {fileID: 1462117135}
-  leftHex: {fileID: 1462117135}
-  rightHex: {fileID: 1462117135}
-  goalHex: {fileID: 2102020036}
-  col0:
-  - {fileID: 1741463894}
-  - {fileID: 1760994390}
-  - {fileID: 1410118885}
-  - {fileID: 1629613619}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  col1:
-  - {fileID: 1586000049}
-  - {fileID: 637273377}
-  - {fileID: 321921155}
-  - {fileID: 324858088}
-  - {fileID: 1218929200}
-  - {fileID: 0}
-  - {fileID: 0}
-  col2:
-  - {fileID: 1738085998}
-  - {fileID: 2102020036}
-  - {fileID: 226154832}
-  - {fileID: 1772020177}
-  - {fileID: 194699766}
-  - {fileID: 649958659}
-  - {fileID: 0}
-  col3:
-  - {fileID: 833002475}
-  - {fileID: 842989215}
-  - {fileID: 555620154}
-  - {fileID: 72339456}
-  - {fileID: 1734655620}
-  - {fileID: 1783394625}
-  - {fileID: 737891636}
-  col4:
-  - {fileID: 0}
-  - {fileID: 199737388}
-  - {fileID: 2075268315}
-  - {fileID: 1615976683}
-  - {fileID: 1234577933}
-  - {fileID: 820685652}
-  - {fileID: 1316231264}
-  col5:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1669407542}
-  - {fileID: 512638502}
-  - {fileID: 1010494256}
-  - {fileID: 1344249183}
-  - {fileID: 483557404}
-  col6:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1600786938}
-  - {fileID: 1930453687}
-  - {fileID: 1373553311}
-  - {fileID: 1048195924}
-  alphas: 0000000000000000000000000000000000000000
-  betas: 0100000003000000fffffffffeffffff02000000
-  moveCounter: 0
-  goalDir: 0
+  mazeLogic: {fileID: 975306111}
+  mode: 1
 --- !u!1 &321921155 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2793424837218825705, guid: a94fcc053b20918a78f7962838c8efdd,
@@ -2680,6 +2616,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 975306110}
+  - component: {fileID: 975306111}
   m_Layer: 0
   m_Name: Maze
   m_TagString: Untagged
@@ -2708,6 +2645,85 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &975306111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975306109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bd98efb1c4344ad29bbb4a4314a232e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curHex: {fileID: 820685652}
+  prevHex: {fileID: 1462117135}
+  leftHex: {fileID: 1462117135}
+  rightHex: {fileID: 1462117135}
+  goalHex: {fileID: 2102020036}
+  col0:
+  - {fileID: 1741463894}
+  - {fileID: 1760994390}
+  - {fileID: 1410118885}
+  - {fileID: 1629613619}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  col1:
+  - {fileID: 1586000049}
+  - {fileID: 637273377}
+  - {fileID: 321921155}
+  - {fileID: 324858088}
+  - {fileID: 1218929200}
+  - {fileID: 0}
+  - {fileID: 0}
+  col2:
+  - {fileID: 1738085998}
+  - {fileID: 2102020036}
+  - {fileID: 226154832}
+  - {fileID: 1772020177}
+  - {fileID: 194699766}
+  - {fileID: 649958659}
+  - {fileID: 0}
+  col3:
+  - {fileID: 833002475}
+  - {fileID: 842989215}
+  - {fileID: 555620154}
+  - {fileID: 72339456}
+  - {fileID: 1734655620}
+  - {fileID: 1783394625}
+  - {fileID: 737891636}
+  col4:
+  - {fileID: 0}
+  - {fileID: 199737388}
+  - {fileID: 2075268315}
+  - {fileID: 1615976683}
+  - {fileID: 1234577933}
+  - {fileID: 820685652}
+  - {fileID: 1316231264}
+  col5:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 1669407542}
+  - {fileID: 512638502}
+  - {fileID: 1010494256}
+  - {fileID: 1344249183}
+  - {fileID: 483557404}
+  col6:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 1600786938}
+  - {fileID: 1930453687}
+  - {fileID: 1373553311}
+  - {fileID: 1048195924}
+  alphas: 0000000000000000000000000000000000000000
+  betas: 0100000003000000fffffffffeffffff02000000
+  moveCounter: 0
+  goalDir: 0
+  leftFacing: 0
+  rightFacing: 0
 --- !u!1001 &978599270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4993,7 +5009,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 500
+      value: 508.66025
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5001,7 +5017,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 500
+      value: 515
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalRotation.x
