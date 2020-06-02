@@ -69,11 +69,15 @@ public class SimpleMovement : MonoBehaviour
 			if(Input.GetKey(left) && !Input.GetKey(right))
 			{
 				facing = mazeLogic.leftFacing;
+				mazeLogic.leftChoice();
+				mazeLogic.lastFacing = facing;
 				StartMove();
 			}
 			else if(Input.GetKey(right) && !Input.GetKey(left))
 			{
 				facing = mazeLogic.rightFacing;
+				mazeLogic.rightChoice();
+				mazeLogic.lastFacing = facing;
 				StartMove();
 			}
 		}

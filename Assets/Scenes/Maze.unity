@@ -2718,12 +2718,12 @@ MonoBehaviour:
   - {fileID: 1930453687}
   - {fileID: 1373553311}
   - {fileID: 1048195924}
-  alphas: 0000000000000000000000000000000000000000
-  betas: 0100000003000000fffffffffeffffff02000000
+  betas: 01000000fdffffff01000000feffffff02000000ffffffff03000000feffffff01000000fdffffff
   moveCounter: 0
   goalDir: 0
   leftFacing: 0
   rightFacing: 0
+  correct: 1
 --- !u!1001 &978599270
 PrefabInstance:
   m_ObjectHideFlags: 0
