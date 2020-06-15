@@ -21,6 +21,8 @@ public class MazeLogic : MonoBehaviour
 
 	public GameObject [,] maze;
 
+	public HUDLogic hud;
+
 	//public int [] alphas;
 	public int [] betas;
 
@@ -274,6 +276,8 @@ public class MazeLogic : MonoBehaviour
 		if(curHex.GetInstanceID() == goalHex.GetInstanceID())
 		{
 			curHex.BroadcastMessage("SetGoal");
+			hud.SetGoal();
+			hud.AddGem();
 		}
 		else
 		{
