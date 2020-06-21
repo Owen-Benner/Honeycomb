@@ -69,14 +69,14 @@ public class SimpleMovement : MonoBehaviour
 			if(Input.GetKey(left) && !Input.GetKey(right))
 			{
 				facing = mazeLogic.leftFacing;
-				mazeLogic.leftChoice();
+				mazeLogic.LeftChoice();
 				mazeLogic.lastFacing = facing;
 				StartMove();
 			}
 			else if(Input.GetKey(right) && !Input.GetKey(left))
 			{
 				facing = mazeLogic.rightFacing;
-				mazeLogic.rightChoice();
+				mazeLogic.RightChoice();
 				mazeLogic.lastFacing = facing;
 				StartMove();
 			}
@@ -230,4 +230,21 @@ public class SimpleMovement : MonoBehaviour
 		mazeLogic.Hit(hit.transform.parent.gameObject);
 	}
 
+	// Move player to new starting hex
+	public void StartTrial(float xPos, float zPos)
+	{
+		Vector3 pos = new Vector3(xPos, cc.transform.position.y, zPos);
+		cc.Move(pos - cc.transform.position);
+		//Debug.Log("teleporting");
+	}
+
+	public Vector3 GetPosition()
+	{
+		return cc.transform.position;
+	}
+
+	public float GetFacing()
+	{
+		return cc.transform.eulerAngles.y;
+	}
 }

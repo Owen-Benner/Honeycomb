@@ -9,7 +9,9 @@ public class MazeLogic : MonoBehaviour
 	public GameObject prevHex;
 	public GameObject leftHex;
 	public GameObject rightHex;
-	public GameObject goalHex;
+
+	public GameObject [] goalHexes;
+	public GameObject [] startHexes;
 
 	public GameObject [] col0;
 	public GameObject [] col1;
@@ -22,8 +24,10 @@ public class MazeLogic : MonoBehaviour
 	public GameObject [,] maze;
 
 	public HUDLogic hud;
+	public LogWriter writer;
+	public SimpleMovement move;
 
-	//public int [] alphas;
+	// New array for each trial?
 	public int [] betas;
 
 	public int moveCounter = 0;
@@ -32,6 +36,10 @@ public class MazeLogic : MonoBehaviour
 
 	public int leftFacing;
 	public int rightFacing;
+
+	public int trial = 0;
+
+	public int lastChoice;
 
 	public bool lastCorrect = true;
 	public bool forceChoice = false;
@@ -77,7 +85,7 @@ public class MazeLogic : MonoBehaviour
 	public void SetChoices(int column, int row)
 	{
 		// Calculate goalDir
-		Vector3 toGoal = goalHex.transform.position -
+		Vector3 toGoal = goalHexes[trial].transform.position -
 			curHex.transform.position;
 		toGoal.y = 0;
 		goalDirExact = Vector3.SignedAngle(Vector3.forward, toGoal,
@@ -273,11 +281,17 @@ public class MazeLogic : MonoBehaviour
 		leftHex.BroadcastMessage("Reset");
 		rightHex.BroadcastMessage("Reset");
 
-		if(curHex.GetInstanceID() == goalHex.GetInstanceID())
+		if(curHex.GetInstanceID() == goalHexes[trial].GetInstanceID())
 		{
 			curHex.BroadcastMessage("SetGoal");
 			hud.SetGoal();
 			hud.AddGem();
+			++trial;
+			GameObject hex = startHexes[trial];
+			curHex = hex;
+			move.StartTrial(hex.transform.position.x,
+				hex.transform.position.z);
+			writer.WriteTrialStart();
 		}
 		else
 		{
@@ -311,15 +325,45 @@ public class MazeLogic : MonoBehaviour
 	}
 
 	// Call if player chooses left
-	public void leftChoice()
+	public void LeftChoice()
 	{
+		lastChoice = 1;
 		lastCorrect = !rightCorrect;
+		writer.WriteAction();
 	}
 
 	// Call if player chooses right
-	public void rightChoice()
+	public void RightChoice()
 	{
+		lastChoice = 2;
 		lastCorrect = rightCorrect;
+		writer.WriteAction();
+	}
+
+	public float GetDistToGoal()
+	{
+		Vector3 dist = goalHexes[trial].transform.position
+			- move.GetPosition();
+		dist.y = 0;
+		return dist.magnitude;
+	}
+
+	public float GetAngleToGoal()
+	{
+		Vector3 toGoal = goalHexes[trial].transform.position
+			- move.GetPosition();
+		toGoal.y = 0;
+		float bearing = Vector3.Angle(Vector3.forward, toGoal);
+		float angle = bearing - move.GetFacing();
+		if(angle > 180f)
+		{
+			angle -= 360f;
+		}
+		else if(angle < -180f)
+		{
+			angle += 360f;
+		}
+		return angle;
 	}
 
 }
