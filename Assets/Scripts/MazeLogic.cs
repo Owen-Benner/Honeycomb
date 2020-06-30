@@ -23,6 +23,11 @@ public class MazeLogic : MonoBehaviour
 
 	public GameObject [,] maze;
 
+	public Camera playerCam;
+	public Camera grayCam;
+	public Canvas playerCanvas;
+	public Canvas grayCanvas;
+
 	public HUDLogic hud;
 	public LogWriter writer;
 	public SimpleMovement move;
@@ -45,10 +50,16 @@ public class MazeLogic : MonoBehaviour
 	public bool forceChoice = false;
 	public bool rightCorrect;
 
+	public bool endTrial = false;
+	public bool gray = true;
+
 	public float goalDirExact;
 	public float alpha;
+	public float endTime;
 
 	private int mode;
+
+	private bool waiting = true;
 
 	// Awake is called when the script instance is being loaded
 	void Awake()
@@ -73,17 +84,43 @@ public class MazeLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		
     }
 
     // Update is called once per frame
     void Update()
     {
-		
+		if(waiting)
+		{
+			if(Input.GetKey("5"))
+			{
+				waiting = false;
+				StartRun();
+			}
+		}
+		else
+		{
+			if(endTrial && Time.time - endTime > 2f)
+			{
+				StartGray();
+				endTrial = false;
+			}
+			if(gray && Time.time - endTime > 4f)
+			{
+				StartTrial();
+			}
+		}
     }
+
+	void StartRun()
+	{
+		endTime = Time.time;
+		writer.StartWriting();
+	}
 
 	public void SetChoices(int column, int row)
 	{
+		//Debug.Log("Setting");
+
 		// Calculate goalDir
 		Vector3 toGoal = goalHexes[trial].transform.position -
 			curHex.transform.position;
@@ -129,7 +166,10 @@ public class MazeLogic : MonoBehaviour
 					Debug.LogError("invalid facing: " + betas[moveCounter]);
 				}
 
+				//TODO: Refactor
 				alpha = (float) leftFacing * 60 - goalDirExact;
+				if(alpha < -180f)
+					alpha += 360f;
 			}
 			else if(betas[moveCounter] < 0)
 			{
@@ -160,6 +200,8 @@ public class MazeLogic : MonoBehaviour
 				}
 
 				alpha = (float) rightFacing * 60 - goalDirExact;
+				if(alpha < -180f)
+					alpha += 360f;
 			}
 			else
 			{
@@ -181,6 +223,8 @@ public class MazeLogic : MonoBehaviour
 					leftFacing = goalDir - 1;
 					rightCorrect = true;
 					alpha = (float) rightFacing * 60 - goalDirExact;
+					if(alpha < -180f)
+						alpha += 360f;
 				}
 				else
 				{
@@ -188,6 +232,8 @@ public class MazeLogic : MonoBehaviour
 					rightFacing = goalDir + 1;
 					rightCorrect = false;
 					alpha = (float) leftFacing * 60 - goalDirExact;
+					if(alpha < -180f)
+						alpha += 360f;
 				}
 			}
 			// If direction of goal leads into previous hex.
@@ -200,6 +246,8 @@ public class MazeLogic : MonoBehaviour
 					leftFacing = goalDir - 2;
 					rightCorrect = true;
 					alpha = (float) rightFacing * 60 - goalDirExact;
+					if(alpha < -180f)
+						alpha += 360f;
 				}
 				else
 				{
@@ -207,6 +255,8 @@ public class MazeLogic : MonoBehaviour
 					rightFacing = goalDir + 2;
 					rightCorrect = false;
 					alpha = (float) leftFacing * 60 - goalDirExact;
+					if(alpha < -180f)
+						alpha += 360f;
 				}
 			}
 		}
@@ -283,18 +333,19 @@ public class MazeLogic : MonoBehaviour
 
 		if(curHex.GetInstanceID() == goalHexes[trial].GetInstanceID())
 		{
+			endTime = Time.time;
+			endTrial = true;
+			move.SetCanMove(false);
+			writer.WriteGoal();
 			curHex.BroadcastMessage("SetGoal");
 			hud.SetGoal();
 			hud.AddGem();
-			++trial;
-			GameObject hex = startHexes[trial];
-			curHex = hex;
-			move.StartTrial(hex.transform.position.x,
-				hex.transform.position.z);
-			writer.WriteTrialStart();
 		}
 		else
 		{
+			if(moveCounter > 0)
+				writer.WriteChoiceStart();
+		
 			SetChoices(curHex.GetComponent<HexLogic>().column,
 				curHex.GetComponent<HexLogic>().row);
 			curHex.BroadcastMessage("SetGray");
@@ -353,17 +404,46 @@ public class MazeLogic : MonoBehaviour
 		Vector3 toGoal = goalHexes[trial].transform.position
 			- move.GetPosition();
 		toGoal.y = 0;
-		float bearing = Vector3.Angle(Vector3.forward, toGoal);
+		float bearing = Vector3.SignedAngle(Vector3.forward, toGoal,
+			Vector3.up);
 		float angle = bearing - move.GetFacing();
-		if(angle > 180f)
-		{
-			angle -= 360f;
-		}
-		else if(angle < -180f)
-		{
+		if(angle < -180f)
 			angle += 360f;
-		}
 		return angle;
+	}
+
+	// Make private?
+	public void StartGray()
+	{
+		gray = true;
+		writer.WriteGrayScreen();
+		++trial;
+		moveCounter = 0;
+		playerCam.enabled = false;
+		playerCanvas.enabled = false;
+		grayCam.enabled = true;
+		grayCanvas.enabled = true;
+		move.SetCanMove(false);
+		move.SetCanTurn(false);
+	}
+
+	public void StartTrial()
+	{
+		gray = false;
+		playerCam.enabled = true;
+		playerCanvas.enabled = true;
+		grayCam.enabled = false;
+		grayCanvas.enabled = false;
+		GameObject hex = startHexes[trial];
+		curHex = hex;
+		move.StartTrial(hex.transform.position.x,
+			hex.transform.position.z);
+		writer.WriteTrialStart();
+		move.SetCanMove(true);
+		move.SetCanTurn(true);
+		if(mode == 1)
+			UpdateHexes();
+		hud.ClearGoal();
 	}
 
 }

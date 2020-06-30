@@ -1,0 +1,20 @@
+Participant number
+Run number
+Mode: 0 = explore, 1 = maze
+Start delay after keypress (seconds)
+End trial delay (seconds)
+Gray screen time (seconds)
+Warning time (seconds)
+Choice time (seconds)
+Time limit (for explore mode, seconds, -1 for maze mode)
+Travel time between hexes (seconds)
+Rotations allowed per second
+Field of View (degrees)
+Number of Trials
+Trial 0 betas (eight ints, in degrees, spaces between)
+Trial 1 betas
+Trial 2 betas
+...
+Trial 7 betas
+Start hexes (one per trial, column-row, spaces between)
+Goal hex (column-row)

@@ -27,6 +27,8 @@ public class LogWriter : MonoBehaviour
 	private int frame = 0;
 	private int choiceNum;
 
+	private bool writing = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,18 +44,20 @@ public class LogWriter : MonoBehaviour
 
         writer = new StreamWriter(fileName);
 		frameTime = 1f / (float) frameFreq;
+    }
 
+	public void StartWriting()
+	{
+		writing = true;
 		WriteFrame();
 		runStart = Time.time;
 		lastFrame = runStart;
-
-		WriteTrialStart();
-    }
+	}
 
     // Update is called once per frame
     void Update()
     {
-        if(Time.time - lastFrame >= frameTime)
+        if(writing && Time.time - lastFrame >= frameTime)
         {
 			WriteFrame();
             lastFrame += frameTime;
@@ -89,7 +93,8 @@ public class LogWriter : MonoBehaviour
 
 	public void WriteAction()
 	{
-		writer.WriteLine("Action " + choiceNum.ToString() + ":" + spc
+		writer.WriteLine("Action " + maze.trial.ToString() + "."
+			+ choiceNum++.ToString() + ":" + spc
 			+ maze.lastChoice.ToString() + spc
 			+ BoolToString(maze.lastCorrect) + spc + maze.alpha + spc
 			+ string.Format("{0:N3}", Time.time - trialStart) + spc
@@ -98,7 +103,8 @@ public class LogWriter : MonoBehaviour
 
 	public void WriteChoiceStart()
 	{
-		writer.WriteLine("Choice " + choiceNum.ToString() + " Start:" + spc
+		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
+			+ choiceNum.ToString() + ":" + spc
 			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
 			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
 			+ (maze.betas[maze.moveCounter] * 60).ToString() + spc
@@ -108,10 +114,20 @@ public class LogWriter : MonoBehaviour
 
 	public void WriteGoal()
 	{
+		int trial = maze.trial;
+		writer.WriteLine("Goal " + trial.ToString() + ":" + spc
+			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
+			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	public void WriteGrayScreen()
 	{
+		int trial = maze.trial;
+		writer.WriteLine("Gray_Screen " + trial.ToString() + ":" + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	private string BoolToString(bool b)

@@ -33,13 +33,14 @@ public class SimpleMovement : MonoBehaviour
 
 	public int mode; // 0 for explore, 1 for maze
 
+	private bool canTurn = false;
+	private bool canMove = false;
+
 	// Start is called before the first frame update
 	void Start()
 	{
 		cc = GetComponent<CharacterController>();
 		mazeLogic.SetMode(mode);
-		if(mode == 1)
-			mazeLogic.UpdateHexes();
 	}
 
 	// Update is called once per frame
@@ -64,7 +65,7 @@ public class SimpleMovement : MonoBehaviour
 				}
 			}
 		}
-		else if(mode == 1 && !moving)
+		else if(canMove && mode == 1 && !moving)
 		{
 			if(Input.GetKey(left) && !Input.GetKey(right))
 			{
@@ -106,12 +107,12 @@ public class SimpleMovement : MonoBehaviour
 		if(cooldown > 0)
 			cooldown -= Time.deltaTime;
 
-		if(Input.GetAxis("Horizontal") > 0.1f && cooldown <= 0)
+		if(canTurn && Input.GetAxis("Horizontal") > 0.1f && cooldown <= 0)
 		{
 			rotate += rotateInterval * Vector3.up;
 			cooldown = rotateCooldown;
 		}
-		else if(Input.GetAxis("Horizontal") < -0.1f && cooldown <= 0)
+		else if(canTurn && Input.GetAxis("Horizontal") < -0.1f && cooldown <= 0)
 		{
 			rotate -= rotateInterval * Vector3.up;
 			cooldown = rotateCooldown;
@@ -153,11 +154,17 @@ public class SimpleMovement : MonoBehaviour
 		if(!cc.isGrounded)
 			move += Time.deltaTime * sinkSpeed * Vector3.down;
 
-		// Apply character translation
-		cc.Move(move);
+		if(canMove)
+		{
+			// Apply character translation
+			cc.Move(move);
+		}
 
-		// Apply character rotation
-		cc.transform.Rotate(rotate);
+		if(canTurn)
+		{
+			// Apply character rotation
+			cc.transform.Rotate(rotate);
+		}
 	}
 
 	public void BeginHold(float length)
@@ -247,4 +254,15 @@ public class SimpleMovement : MonoBehaviour
 	{
 		return cc.transform.eulerAngles.y;
 	}
+
+	public void SetCanMove(bool _canMove)
+	{
+		canMove = _canMove;
+	}
+
+	public void SetCanTurn(bool _canTurn)
+	{
+		canTurn = _canTurn;
+	}
+
 }
