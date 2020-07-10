@@ -28,10 +28,32 @@ public class LogWriter : MonoBehaviour
 	private int choiceNum;
 
 	private bool writing = false;
+	private bool start = true;
+	private bool gray = false;
 
     // Start is called before the first frame update
     void Start()
     {
+		frameTime = 1f / (float) frameFreq;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(writing && Time.time - lastFrame >= frameTime)
+        {
+			if(start)
+				WriteStartFrame();
+			else if(gray)
+				WriteGrayFrame();
+			else
+				WriteFrame();
+            lastFrame += frameTime;
+        }
+    }
+
+	public void InitWriter()
+	{
         try
         {
             lastRunReader = new StreamReader(fileName);
@@ -43,26 +65,15 @@ public class LogWriter : MonoBehaviour
         catch {}
 
         writer = new StreamWriter(fileName);
-		frameTime = 1f / (float) frameFreq;
-    }
+	}
 
 	public void StartWriting()
 	{
 		writing = true;
-		WriteFrame();
 		runStart = Time.time;
+		WriteStartFrame();
 		lastFrame = runStart;
 	}
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(writing && Time.time - lastFrame >= frameTime)
-        {
-			WriteFrame();
-            lastFrame += frameTime;
-        }
-    }
 
 	private void WriteFrame()
 	{
@@ -74,6 +85,19 @@ public class LogWriter : MonoBehaviour
 			+ string.Format("{0:N3}", Time.time - runStart) + spc
 			+ string.Format("{0:N3}", maze.GetDistToGoal()) + spc
 			+ string.Format("{0:N3}", maze.GetAngleToGoal()));
+	}
+
+	private void WriteGrayFrame()
+	{
+		writer.WriteLine("Frame " + (frame++).ToString() + ":" + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	private void WriteStartFrame()
+	{
+		writer.WriteLine("Frame " + (frame++).ToString() + ":" + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	public void WriteTrialStart()
@@ -136,6 +160,16 @@ public class LogWriter : MonoBehaviour
 			return "1";
 		else
 			return "0";
+	}
+
+	public void SetStart(bool _start)
+	{
+		start = _start;
+	}
+
+	public void SetGray(bool _gray)
+	{
+		gray = _gray;
 	}
 
 }

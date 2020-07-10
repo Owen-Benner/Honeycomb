@@ -105,6 +105,29 @@ public class FileReader : MonoBehaviour
 		}
 		*/
 
+		if(mode == 0)
+			writer.fileName = partStr + "_explore_" + runStr + ".xml";
+		else if(mode == 1)
+			writer.fileName = partStr + "_maze_" + runStr + ".xml";
+
+		writer.InitWriter();
+
+		try
+		{
+			maze.startDelay = float.Parse(startDelayStr);
+			maze.endDelay = float.Parse(endDelayStr);
+			maze.grayTime = float.Parse(grayTimeStr);
+			maze.warnTime = float.Parse(warnTimeStr);
+			maze.choiceTime = float.Parse(choiceTimeStr);
+			maze.timeLimit = float.Parse(timeLimitStr);
+		}
+		catch(Exception e)
+		{
+			Debug.LogError("Error parsing file (1)!");
+			Debug.LogError(e);
+			Application.Quit();
+		}
+
 		try
 		{
 			move.moveSpeed = 10f / float.Parse(travelTimeStr);

@@ -57,6 +57,14 @@ public class MazeLogic : MonoBehaviour
 	public float alpha;
 	public float endTime;
 
+	// Config variables
+	public float startDelay;
+	public float endDelay = 2f;
+	public float grayTime = 2f;
+	public float warnTime;
+	public float choiceTime;
+	public float timeLimit;
+
 	private int mode;
 
 	private bool waiting = true;
@@ -99,12 +107,12 @@ public class MazeLogic : MonoBehaviour
 		}
 		else
 		{
-			if(endTrial && Time.time - endTime > 2f)
+			if(endTrial && Time.time - endTime > endDelay)
 			{
 				StartGray();
 				endTrial = false;
 			}
-			if(gray && Time.time - endTime > 4f)
+			if(gray && Time.time - endTime > endDelay + grayTime)
 			{
 				StartTrial();
 			}
@@ -114,6 +122,7 @@ public class MazeLogic : MonoBehaviour
 	void StartRun()
 	{
 		endTime = Time.time;
+		writer.SetStart(true);
 		writer.StartWriting();
 	}
 
@@ -132,7 +141,6 @@ public class MazeLogic : MonoBehaviour
 
 		if(lastCorrect)
 		{
-			// TODO: Refactor alpha calculation
 			// Find choice angles
 			// Currently the wrong choice is on the right if beta > 0,
 			// and on the left if beta < 0
@@ -166,10 +174,7 @@ public class MazeLogic : MonoBehaviour
 					Debug.LogError("invalid facing: " + betas[moveCounter]);
 				}
 
-				//TODO: Refactor
-				alpha = (float) leftFacing * 60 - goalDirExact;
-				if(alpha < -180f)
-					alpha += 360f;
+				alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 			}
 			else if(betas[moveCounter] < 0)
 			{
@@ -199,9 +204,7 @@ public class MazeLogic : MonoBehaviour
 					Debug.LogError("invalid facing: " + betas[moveCounter]);
 				}
 
-				alpha = (float) rightFacing * 60 - goalDirExact;
-				if(alpha < -180f)
-					alpha += 360f;
+				alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
 			}
 			else
 			{
@@ -213,7 +216,6 @@ public class MazeLogic : MonoBehaviour
 		else
 		{
 			// TODO: Fix cases near edge of maze
-
 			// If direction of goal doesn't lead into previous hex.
 			if(goalDir + 3 != lastFacing && goalDir -3 != lastFacing)
 			{
@@ -222,18 +224,16 @@ public class MazeLogic : MonoBehaviour
 					rightFacing = goalDir;
 					leftFacing = goalDir - 1;
 					rightCorrect = true;
-					alpha = (float) rightFacing * 60 - goalDirExact;
-					if(alpha < -180f)
-						alpha += 360f;
+
+					alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
 				}
 				else
 				{
 					leftFacing = goalDir;
 					rightFacing = goalDir + 1;
 					rightCorrect = false;
-					alpha = (float) leftFacing * 60 - goalDirExact;
-					if(alpha < -180f)
-						alpha += 360f;
+
+					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 				}
 			}
 			// If direction of goal leads into previous hex.
@@ -245,18 +245,16 @@ public class MazeLogic : MonoBehaviour
 					rightFacing = goalDir - 1;
 					leftFacing = goalDir - 2;
 					rightCorrect = true;
-					alpha = (float) rightFacing * 60 - goalDirExact;
-					if(alpha < -180f)
-						alpha += 360f;
+
+					alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
 				}
 				else
 				{
 					leftFacing = goalDir + 1;
 					rightFacing = goalDir + 2;
 					rightCorrect = false;
-					alpha = (float) leftFacing * 60 - goalDirExact;
-					if(alpha < -180f)
-						alpha += 360f;
+
+					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 				}
 			}
 		}
@@ -416,6 +414,7 @@ public class MazeLogic : MonoBehaviour
 	public void StartGray()
 	{
 		gray = true;
+		writer.SetGray(true);
 		writer.WriteGrayScreen();
 		++trial;
 		moveCounter = 0;
@@ -430,6 +429,8 @@ public class MazeLogic : MonoBehaviour
 	public void StartTrial()
 	{
 		gray = false;
+		writer.SetGray(false);
+		writer.SetStart(false);
 		playerCam.enabled = true;
 		playerCanvas.enabled = true;
 		grayCam.enabled = false;
@@ -444,6 +445,16 @@ public class MazeLogic : MonoBehaviour
 		if(mode == 1)
 			UpdateHexes();
 		hud.ClearGoal();
+	}
+
+	private float CalcAlpha(float heading, float goal)
+	{
+		float alpha = heading - goal;
+		if(alpha > 180f)
+			alpha -= 360f;
+		if(alpha < -180f)
+			alpha += 360f;
+		return alpha;
 	}
 
 }
