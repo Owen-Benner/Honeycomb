@@ -12,6 +12,8 @@ public class LogWriter : MonoBehaviour
 
 	public string fileName;
 
+	public int mode;
+
 	public int frameFreq = 24;
 
     StreamReader lastRunReader;
@@ -109,7 +111,7 @@ public class LogWriter : MonoBehaviour
 			.column.ToString() + "-"
 			+ maze.startHexes[trial].GetComponent<HexLogic>()
 			.row.ToString() + spc
-			+ (maze.betas[0] * 60).ToString() + spc
+			+ (maze.betas[trial, 0] * 60).ToString() + spc
 			+ string.Format("{0:N3}", Time.time - runStart));
 
 		choiceNum = 0;
@@ -127,11 +129,12 @@ public class LogWriter : MonoBehaviour
 
 	public void WriteChoiceStart()
 	{
+		int trial = maze.trial;
 		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
 			+ choiceNum.ToString() + ":" + spc
 			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
 			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
-			+ (maze.betas[maze.moveCounter] * 60).ToString() + spc
+			+ (maze.betas[trial, maze.moveCounter] * 60).ToString() + spc
 			+ string.Format("{0:N3}", Time.time - trialStart) + spc
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}

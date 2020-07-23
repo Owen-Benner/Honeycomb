@@ -69,17 +69,11 @@ public class SimpleMovement : MonoBehaviour
 		{
 			if(Input.GetKey(left) && !Input.GetKey(right))
 			{
-				facing = mazeLogic.leftFacing;
-				mazeLogic.LeftChoice();
-				mazeLogic.lastFacing = facing;
-				StartMove();
+				LeftChoice();
 			}
 			else if(Input.GetKey(right) && !Input.GetKey(left))
 			{
-				facing = mazeLogic.rightFacing;
-				mazeLogic.RightChoice();
-				mazeLogic.lastFacing = facing;
-				StartMove();
+				RightChoice();
 			}
 		}
 
@@ -167,6 +161,22 @@ public class SimpleMovement : MonoBehaviour
 		}
 	}
 
+	public void LeftChoice()
+	{
+		facing = mazeLogic.leftFacing;
+		mazeLogic.LeftChoice();
+		mazeLogic.lastFacing = facing;
+		StartMove();
+	}
+
+	public void RightChoice()
+	{
+		facing = mazeLogic.rightFacing;
+		mazeLogic.RightChoice();
+		mazeLogic.lastFacing = facing;
+		StartMove();
+	}
+
 	public void BeginHold(float length)
 	{
 		hold = length;
@@ -230,6 +240,15 @@ public class SimpleMovement : MonoBehaviour
 		cc.transform.position = pos;
 	}
 
+	public void SnapRot()
+	{
+		int rotation = Mathf.RoundToInt(cc.transform.eulerAngles.y
+			/ rotateInterval);
+		rotation *= (int) rotateInterval;
+		cc.transform.eulerAngles = new Vector3(cc.transform.eulerAngles.x,
+			(float) rotation, cc.transform.eulerAngles.z);
+	}
+
 	public void OnControllerColliderHit(ControllerColliderHit hit)
 	{
 		//Debug.Log("hit");
@@ -255,6 +274,12 @@ public class SimpleMovement : MonoBehaviour
 		return cc.transform.eulerAngles.y;
 	}
 
+	public void SetFacing(float angle)
+	{
+		cc.transform.eulerAngles = new Vector3(cc.transform.eulerAngles.x,
+			angle, cc.transform.eulerAngles.z);
+	}
+
 	public void SetCanMove(bool _canMove)
 	{
 		canMove = _canMove;
@@ -264,5 +289,12 @@ public class SimpleMovement : MonoBehaviour
 	{
 		canTurn = _canTurn;
 	}
+
+	/*
+	public bool GetMoving()
+	{
+		return moving;
+	}
+	*/
 
 }

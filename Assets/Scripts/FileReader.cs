@@ -30,7 +30,7 @@ public class FileReader : MonoBehaviour
 	private string fovStr;
 
 	private string[] betasArr;
-	private string[][] betasArr2d;
+	private string[][] betasArrArr;
 
 	private string startHexStr;
 	private string[] startHexArr;
@@ -60,8 +60,14 @@ public class FileReader : MonoBehaviour
 
 			numTrials = int.Parse(reader.ReadLine());
 			betasArr = new string[numTrials];
+			for(int i = 0; i < betasArr.Length; ++i)
+			{
+				betasArr[i] = reader.ReadLine();
+			}
 
 			startHexStr = reader.ReadLine();
+			
+			goalHexStr = reader.ReadLine();
 
 			reader.Close();
 		}
@@ -75,24 +81,11 @@ public class FileReader : MonoBehaviour
 
 	void Start()
 	{
-		try
-		{
-			/*
-			writer.mode = mode;
-			//logReader.mode = mode;
-			writer.partCode = partStr;
-			//logReader.partCode = partStr;
-			writer.runNum = int.Parse(runStr);
-			//logReader.runNum = writer.runNum;
-			*/
-			move.mode = mode;
-		}
-		catch(Exception e)
-		{
-			Debug.LogError("Error parsing file (1)!");
-			Debug.LogError(e);
-			Application.Quit();
-		}
+		move.mode = mode;
+
+		//logReader.mode = mode;
+		//logReader.partCode = partStr;
+		//logReader.runNum = writer.runNum;
 
 		/*
 		if(mode == 3)
@@ -104,6 +97,8 @@ public class FileReader : MonoBehaviour
 			writer.enabled = true;
 		}
 		*/
+
+		writer.mode = mode;
 
 		if(mode == 0)
 			writer.fileName = partStr + "_explore_" + runStr + ".xml";
@@ -123,7 +118,7 @@ public class FileReader : MonoBehaviour
 		}
 		catch(Exception e)
 		{
-			Debug.LogError("Error parsing file (1)!");
+			Debug.LogError("Error parsing file (2)!");
 			Debug.LogError(e);
 			Application.Quit();
 		}
@@ -131,6 +126,7 @@ public class FileReader : MonoBehaviour
 		try
 		{
 			move.moveSpeed = 10f / float.Parse(travelTimeStr);
+			move.rotateCooldown = 1f / float.Parse(rotRateStr);
 
 			foreach(Camera c in move.gameObject.GetComponentsInChildren
 				<Camera>())
@@ -189,7 +185,53 @@ public class FileReader : MonoBehaviour
 		}
 		catch(Exception e)
 		{
-			Debug.LogError("Error parsing file (2)!!");
+			Debug.LogError("Error parsing file (3)!!");
+			Debug.LogError(e);
+			Application.Quit();
+		}
+
+		try
+		{
+			betasArrArr = new string[numTrials][];
+			int length = 0;
+			for(int i = 0; i < numTrials; ++i)
+			{
+				betasArrArr[i] = betasArr[i].Split(' ');
+				if(betasArrArr[i].Length > length)
+					length = betasArrArr[i].Length;
+			}
+			maze.betas = new int[numTrials, length];
+
+			for(int i = 0; i < numTrials; ++i)
+				for(int j = 0; j < betasArrArr[i].Length; ++j)
+					maze.betas[i, j] = int.Parse(betasArrArr[i][j]) / 60;
+		}
+		catch(Exception e)
+		{
+			Debug.LogError("Error parsing file (4)!!");
+			Debug.LogError(e);
+			Application.Quit();
+		}
+
+		try
+		{
+			startHexArr = startHexStr.Split(' ');
+			maze.startHexes = new GameObject[startHexArr.Length];
+			for(int i = 0; i < startHexArr.Length; ++i)
+			{
+				string[] startStr = startHexArr[i].Split('-');
+				int[] startInt = {int.Parse(startStr[0]),
+					int.Parse(startStr[1])};
+				maze.startHexes[i] = maze.maze[startInt[0], startInt[1]];
+			}
+
+			string[] goalStr = goalHexStr.Split('-');
+			int[] goalInt = {int.Parse(goalStr[0]), int.Parse(goalStr[1])};
+			maze.goalHex = maze.maze[goalInt[0], goalInt[1]];
+		}
+		catch(Exception e)
+		{
+			Debug.LogError("Error parsing file (5)!!");
 			Debug.LogError(e);
 			Application.Quit();
 		}

@@ -10,18 +10,18 @@ public class MazeLogic : MonoBehaviour
 	public GameObject leftHex;
 	public GameObject rightHex;
 
-	public GameObject [] goalHexes;
-	public GameObject [] startHexes;
+	public GameObject goalHex;
+	public GameObject[] startHexes;
 
-	public GameObject [] col0;
-	public GameObject [] col1;
-	public GameObject [] col2;
-	public GameObject [] col3;
-	public GameObject [] col4;
-	public GameObject [] col5;
-	public GameObject [] col6;
+	public GameObject[] col0;
+	public GameObject[] col1;
+	public GameObject[] col2;
+	public GameObject[] col3;
+	public GameObject[] col4;
+	public GameObject[] col5;
+	public GameObject[] col6;
 
-	public GameObject [,] maze;
+	public GameObject[,] maze;
 
 	public Camera playerCam;
 	public Camera grayCam;
@@ -32,8 +32,7 @@ public class MazeLogic : MonoBehaviour
 	public LogWriter writer;
 	public SimpleMovement move;
 
-	// New array for each trial?
-	public int [] betas;
+	public int[,] betas;
 
 	public int moveCounter = 0;
 	public int goalDir = 0;
@@ -65,9 +64,12 @@ public class MazeLogic : MonoBehaviour
 	public float choiceTime;
 	public float timeLimit;
 
+	private float choiceStartTime;
+
 	private int mode;
 
 	private bool waiting = true;
+	private bool choosing = false;
 
 	// Awake is called when the script instance is being loaded
 	void Awake()
@@ -105,6 +107,13 @@ public class MazeLogic : MonoBehaviour
 				StartRun();
 			}
 		}
+		else if(choosing && Time.time - choiceStartTime >= choiceTime)
+		{
+			if(rightCorrect)
+				move.RightChoice();
+			else
+				move.LeftChoice();
+		}
 		else
 		{
 			if(endTrial && Time.time - endTime > endDelay)
@@ -114,7 +123,10 @@ public class MazeLogic : MonoBehaviour
 			}
 			if(gray && Time.time - endTime > endDelay + grayTime)
 			{
-				StartTrial();
+				if(trial < startHexes.Length)
+					StartTrial();
+				else
+					Application.Quit();
 			}
 		}
     }
@@ -131,7 +143,7 @@ public class MazeLogic : MonoBehaviour
 		//Debug.Log("Setting");
 
 		// Calculate goalDir
-		Vector3 toGoal = goalHexes[trial].transform.position -
+		Vector3 toGoal = goalHex.transform.position -
 			curHex.transform.position;
 		toGoal.y = 0;
 		goalDirExact = Vector3.SignedAngle(Vector3.forward, toGoal,
@@ -144,10 +156,10 @@ public class MazeLogic : MonoBehaviour
 			// Find choice angles
 			// Currently the wrong choice is on the right if beta > 0,
 			// and on the left if beta < 0
-			if(betas[moveCounter] > 0)
+			if(betas[trial, moveCounter] > 0)
 			{
 				leftFacing = goalDir;
-				rightFacing = leftFacing + betas[moveCounter];
+				rightFacing = leftFacing + betas[trial, moveCounter];
 
 				// TODO: Fix cases near edge of maze
 				rightCorrect = false;
@@ -157,11 +169,12 @@ public class MazeLogic : MonoBehaviour
 
 				// Fix angles if wrong choice is off edge
 				// Assumes correct choice is on a hex
-				if(betas[moveCounter] == 3)
+				if(betas[trial, moveCounter] == 3)
 				{
 					forceChoice = CheckEdge(rightFacing);
 				}
-				else if(betas[moveCounter] == 1 || betas[moveCounter] == 2)
+				else if(betas[trial, moveCounter] == 1
+					|| betas[trial, moveCounter] == 2)
 				{
 					while(!CheckEdge(rightFacing))
 					{
@@ -171,15 +184,16 @@ public class MazeLogic : MonoBehaviour
 				}
 				else
 				{
-					Debug.LogError("invalid facing: " + betas[moveCounter]);
+					Debug.LogError("invalid facing: "
+						+ betas[trial, moveCounter]);
 				}
 
 				alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 			}
-			else if(betas[moveCounter] < 0)
+			else if(betas[trial, moveCounter] < 0)
 			{
 				rightFacing = goalDir;
-				leftFacing = rightFacing + betas[moveCounter];
+				leftFacing = rightFacing + betas[trial, moveCounter];
 
 				// TODO: Fix cases near edge of maze
 				rightCorrect = true;
@@ -187,11 +201,12 @@ public class MazeLogic : MonoBehaviour
 				leftFacing = (leftFacing + 6) % 6;
 				rightFacing = (rightFacing + 6) % 6;
 
-				if(betas[moveCounter] == -3)
+				if(betas[trial, moveCounter] == -3)
 				{
 					forceChoice = CheckEdge(rightFacing);
 				}
-				else if(betas[moveCounter] == -1 || betas[moveCounter] == -2)
+				else if(betas[trial, moveCounter] == -1
+					|| betas[trial, moveCounter] == -2)
 				{
 					while(!CheckEdge(rightFacing))
 					{
@@ -201,14 +216,15 @@ public class MazeLogic : MonoBehaviour
 				}
 				else
 				{
-					Debug.LogError("invalid facing: " + betas[moveCounter]);
+					Debug.LogError("invalid facing: "
+						+ betas[trial, moveCounter]);
 				}
 
 				alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
 			}
 			else
 			{
-				Debug.LogError("invalid facing: " + betas[moveCounter]);
+				Debug.LogError("invalid facing: " + betas[trial, moveCounter]);
 			}
 
 			++moveCounter;
@@ -329,7 +345,7 @@ public class MazeLogic : MonoBehaviour
 		leftHex.BroadcastMessage("Reset");
 		rightHex.BroadcastMessage("Reset");
 
-		if(curHex.GetInstanceID() == goalHexes[trial].GetInstanceID())
+		if(curHex.GetInstanceID() == goalHex.GetInstanceID())
 		{
 			endTime = Time.time;
 			endTrial = true;
@@ -342,7 +358,11 @@ public class MazeLogic : MonoBehaviour
 		else
 		{
 			if(moveCounter > 0)
+			{
 				writer.WriteChoiceStart();
+				choosing = true;
+				choiceStartTime = Time.time;
+			}
 		
 			SetChoices(curHex.GetComponent<HexLogic>().column,
 				curHex.GetComponent<HexLogic>().row);
@@ -379,6 +399,7 @@ public class MazeLogic : MonoBehaviour
 		lastChoice = 1;
 		lastCorrect = !rightCorrect;
 		writer.WriteAction();
+		choosing = false;
 	}
 
 	// Call if player chooses right
@@ -387,27 +408,41 @@ public class MazeLogic : MonoBehaviour
 		lastChoice = 2;
 		lastCorrect = rightCorrect;
 		writer.WriteAction();
+		choosing = false;
 	}
 
 	public float GetDistToGoal()
 	{
-		Vector3 dist = goalHexes[trial].transform.position
+		Vector3 dist = goalHex.transform.position
 			- move.GetPosition();
-		dist.y = 0;
+		dist.y = 0f;
 		return dist.magnitude;
 	}
 
 	public float GetAngleToGoal()
 	{
-		Vector3 toGoal = goalHexes[trial].transform.position
+		if(curHex == goalHex)
+			return 0f;
+		Vector3 toGoal = goalHex.transform.position
 			- move.GetPosition();
-		toGoal.y = 0;
+		toGoal.y = 0f;
 		float bearing = Vector3.SignedAngle(Vector3.forward, toGoal,
 			Vector3.up);
 		float angle = bearing - move.GetFacing();
 		if(angle < -180f)
 			angle += 360f;
 		return angle;
+	}
+
+	public float GetHeadingToCenter()
+	{
+		if(curHex == maze[3,3])
+			return 0f;
+		Vector3 toGoal = maze[3,3].transform.position - move.GetPosition();
+		toGoal.y = 0f;
+		float bearing = Vector3.SignedAngle(Vector3.forward, toGoal,
+			Vector3.up);
+		return bearing;
 	}
 
 	// Make private?
@@ -440,11 +475,15 @@ public class MazeLogic : MonoBehaviour
 		move.StartTrial(hex.transform.position.x,
 			hex.transform.position.z);
 		writer.WriteTrialStart();
+		choosing = true;
+		choiceStartTime = Time.time;
 		move.SetCanMove(true);
 		move.SetCanTurn(true);
 		if(mode == 1)
 			UpdateHexes();
 		hud.ClearGoal();
+		move.SetFacing(GetHeadingToCenter());
+		move.SnapRot();
 	}
 
 	private float CalcAlpha(float heading, float goal)
