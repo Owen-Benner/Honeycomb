@@ -1434,6 +1434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf3fd77b2c3e91dd6a32ee4504a4bdc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  writer: {fileID: 1462117136}
   moveSpeed: 5
   sinkSpeed: 4
   hexRadius: 10
@@ -2901,15 +2902,7 @@ MonoBehaviour:
   prevHex: {fileID: 1462117135}
   leftHex: {fileID: 1462117135}
   rightHex: {fileID: 1462117135}
-  goalHexes:
-  - {fileID: 2102020036}
-  - {fileID: 2102020036}
-  - {fileID: 2102020036}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  goalHex: {fileID: 0}
   startHexes:
   - {fileID: 820685652}
   - {fileID: 1010494256}
@@ -2982,7 +2975,6 @@ MonoBehaviour:
   hud: {fileID: 2042499248}
   writer: {fileID: 1462117136}
   move: {fileID: 318258059}
-  betas: 01000000fdffffff01000000feffffff02000000ffffffff03000000feffffff01000000fdffffff
   moveCounter: 0
   goalDir: 0
   lastFacing: 0
@@ -2998,6 +2990,12 @@ MonoBehaviour:
   goalDirExact: 0
   alpha: 0
   endTime: 0
+  startDelay: 0
+  endDelay: 2
+  grayTime: 2
+  warnTime: 0
+  choiceTime: 0
+  timeLimit: 0
 --- !u!1001 &978599270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5176,6 +5174,8 @@ MonoBehaviour:
   move: {fileID: 318258059}
   maze: {fileID: 975306111}
   fileName: Log.txt
+  runStart: 0
+  mode: 0
   frameFreq: 24
 --- !u!114 &1462117139
 MonoBehaviour:
@@ -6157,6 +6157,85 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1556796596}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1775895506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1775895507}
+  - component: {fileID: 1775895509}
+  - component: {fileID: 1775895508}
+  m_Layer: 5
+  m_Name: WarnText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1775895507
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775895506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2042499247}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -48}
+  m_SizeDelta: {x: 1024, y: 512}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1775895508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775895506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.6862745, g: 0.6862745, b: 0.6862745, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 64
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 80
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Please make a choice.
+--- !u!222 &1775895509
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775895506}
+  m_CullTransparentMesh: 0
 --- !u!1 &1783394625 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2793424837218825705, guid: a94fcc053b20918a78f7962838c8efdd,
@@ -7047,6 +7126,7 @@ RectTransform:
   - {fileID: 2097415416}
   - {fileID: 424501529}
   - {fileID: 1879029472}
+  - {fileID: 1775895507}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7069,6 +7149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gemCounter: {fileID: 2097415417}
   goalText: {fileID: 424501530}
+  warnText: {fileID: 1775895508}
   gemPile: {fileID: 1879029473}
 --- !u!4 &2059059832 stripped
 Transform:

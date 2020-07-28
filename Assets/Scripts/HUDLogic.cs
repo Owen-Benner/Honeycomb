@@ -8,6 +8,7 @@ public class HUDLogic : MonoBehaviour
 
 	public Text gemCounter;
 	public Text goalText;
+	public Text warnText;
 
 	public Image gemPile;
 
@@ -18,6 +19,7 @@ public class HUDLogic : MonoBehaviour
     {
 		gemCounter.text = gems.ToString();
 		ClearGoal();
+		ClearWarn();
     }
 
     // Update is called once per frame
@@ -45,6 +47,16 @@ public class HUDLogic : MonoBehaviour
 	{
 		++gems;
 		gemCounter.text = gems.ToString();
+	}
+
+	public void SetWarn()
+	{
+		warnText.enabled = true;
+	}
+
+	public void ClearWarn()
+	{
+		warnText.enabled = false;
 	}
 
 }

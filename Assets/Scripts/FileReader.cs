@@ -82,6 +82,7 @@ public class FileReader : MonoBehaviour
 	void Start()
 	{
 		move.mode = mode;
+		maze.SetMode(mode);
 
 		//logReader.mode = mode;
 		//logReader.partCode = partStr;

@@ -1,0 +1,69 @@
+Configuration:
+	Participant number
+	Run number
+	Mode: 0 = explore, 1 = maze
+	Start delay after keypress (seconds)
+	End trial delay (seconds)
+	Gray screen time (seconds)
+	Warning time (seconds)
+	Choice time (seconds)
+	Time limit (for explore mode, seconds, -1 for maze mode)
+	Travel time between hexes (seconds)
+	Rotations allowed per second
+	Field of View (degrees)
+	Number of Trials
+	Trial 0 betas (eight ints, in degrees, spaces between)
+	Trial 1 betas
+	Trial 2 betas
+	...
+	Trial 7 betas
+	Start hexes (one per trial, column-row, spaces between)
+	Goal hex (column-row)
+
+Output:
+	Frame
+		Frame number
+		xPos
+		zPos
+		Facing
+		TrialTime
+		RunTime
+		DistToGoal
+		AngleToGoal
+		Difference (signed angle) between bearing to goal and
+			player facing
+	Trial start
+		Trial number
+		Starting hexagon number
+		Current beta
+		RunTime
+		Action (count properly)
+		Color of option chosen (1 = blue, 2 = purple)
+		isCorrect (int)
+		Alpha (angle between choice dir and goal dir)
+		TrialTime (exact?)
+		RunTime
+	Choice start (don’t show with trial start)
+		Choice number
+		Hex number
+		Current beta
+		TrialTime
+		RunTime
+	On reaching goal
+		Hex number
+		TrialTime
+		RunTime
+	Gray screen
+		TrialTime (previous trial)
+		RunTime
+Output (explore):
+	Trial start
+		-beta
+	Choice start
+		-beta
+	Action
+		Move dir
+		Trial time
+		Run time
+	Frame
+		-goal stuff

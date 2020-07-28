@@ -70,6 +70,7 @@ public class MazeLogic : MonoBehaviour
 
 	private bool waiting = true;
 	private bool choosing = false;
+	private bool warning = false;
 
 	// Awake is called when the script instance is being loaded
 	void Awake()
@@ -107,26 +108,38 @@ public class MazeLogic : MonoBehaviour
 				StartRun();
 			}
 		}
-		else if(choosing && Time.time - choiceStartTime >= choiceTime)
+		else if(Time.time - writer.runStart >= timeLimit)
 		{
-			if(rightCorrect)
-				move.RightChoice();
-			else
-				move.LeftChoice();
+			Debug.Log("Out of time, quitting.");
+			Application.Quit();
 		}
-		else
+		else if(gray && Time.time - endTime > endDelay + grayTime)
 		{
-			if(endTrial && Time.time - endTime > endDelay)
+			if(trial < startHexes.Length)
+				StartTrial();
+			else
+				Application.Quit();
+		}
+		else if(mode == 1)
+		{
+			if(choosing && Time.time - choiceStartTime >= choiceTime)
+			{
+				hud.ClearWarn();
+				warning = false;
+				if(rightCorrect)
+					move.RightChoice();
+				else
+					move.LeftChoice();
+			}
+			else if(choosing && !warning && Time.time - choiceStartTime
+				>= warnTime)
+			{
+				hud.SetWarn();
+				warning = true;
+			}
+			else if(endTrial && Time.time - endTime > endDelay)
 			{
 				StartGray();
-				endTrial = false;
-			}
-			if(gray && Time.time - endTime > endDelay + grayTime)
-			{
-				if(trial < startHexes.Length)
-					StartTrial();
-				else
-					Application.Quit();
 			}
 		}
     }
@@ -338,7 +351,7 @@ public class MazeLogic : MonoBehaviour
 
 	public void UpdateHexes()
 	{
-		//Debug.Log("Updating");
+		Debug.Log("Updating");
 
 		// Remove previous highlighting
 		prevHex.BroadcastMessage("Reset");
@@ -448,6 +461,7 @@ public class MazeLogic : MonoBehaviour
 	// Make private?
 	public void StartGray()
 	{
+		endTrial = false;
 		gray = true;
 		writer.SetGray(true);
 		writer.WriteGrayScreen();
@@ -481,6 +495,8 @@ public class MazeLogic : MonoBehaviour
 		move.SetCanTurn(true);
 		if(mode == 1)
 			UpdateHexes();
+		else
+			BroadcastMessage("SetExplore");
 		hud.ClearGoal();
 		move.SetFacing(GetHeadingToCenter());
 		move.SnapRot();

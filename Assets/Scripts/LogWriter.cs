@@ -12,6 +12,8 @@ public class LogWriter : MonoBehaviour
 
 	public string fileName;
 
+	public float runStart;
+
 	public int mode;
 
 	public int frameFreq = 24;
@@ -22,7 +24,6 @@ public class LogWriter : MonoBehaviour
 	private float lastFrame;
 	private float frameTime;
 	private float trialStart;
-	private float runStart;
 
 	private string spc = " ";
 
@@ -79,14 +80,22 @@ public class LogWriter : MonoBehaviour
 
 	private void WriteFrame()
 	{
-		writer.WriteLine("Frame " + (frame++).ToString() + ":" + spc
-			+ string.Format("{0:N3}", player.position.x) + spc
-			+ string.Format("{0:N3}", player.position.z) + spc
-			+ string.Format("{0:N3}", player.eulerAngles.y) + spc
-			+ string.Format("{0:N3}", Time.time - trialStart) + spc
-			+ string.Format("{0:N3}", Time.time - runStart) + spc
-			+ string.Format("{0:N3}", maze.GetDistToGoal()) + spc
-			+ string.Format("{0:N3}", maze.GetAngleToGoal()));
+		if(mode == 1)
+			writer.WriteLine("Frame " + (frame++).ToString() + ":" + spc
+				+ string.Format("{0:N3}", player.position.x) + spc
+				+ string.Format("{0:N3}", player.position.z) + spc
+				+ string.Format("{0:N3}", player.eulerAngles.y) + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart) + spc
+				+ string.Format("{0:N3}", maze.GetDistToGoal()) + spc
+				+ string.Format("{0:N3}", maze.GetAngleToGoal()));
+		else if(mode == 0)
+			writer.WriteLine("Frame " + (frame++).ToString() + ":" + spc
+				+ string.Format("{0:N3}", player.position.x) + spc
+				+ string.Format("{0:N3}", player.position.z) + spc
+				+ string.Format("{0:N3}", player.eulerAngles.y) + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	private void WriteGrayFrame()
@@ -106,37 +115,66 @@ public class LogWriter : MonoBehaviour
 	{
 		trialStart = Time.time;
 		int trial = maze.trial;
-		writer.WriteLine("Trial " + trial.ToString() + ":" + spc
-			+ maze.startHexes[trial].GetComponent<HexLogic>()
-			.column.ToString() + "-"
-			+ maze.startHexes[trial].GetComponent<HexLogic>()
-			.row.ToString() + spc
-			+ (maze.betas[trial, 0] * 60).ToString() + spc
-			+ string.Format("{0:N3}", Time.time - runStart));
+
+		if(mode == 1)
+			writer.WriteLine("Trial " + trial.ToString() + ":" + spc
+				+ maze.startHexes[trial].GetComponent<HexLogic>()
+				.column.ToString() + "-"
+				+ maze.startHexes[trial].GetComponent<HexLogic>()
+				.row.ToString() + spc
+				+ (maze.betas[trial, 0] * 60).ToString() + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
+		else if(mode == 0)
+			writer.WriteLine("Trial " + trial.ToString() + ":" + spc
+				+ maze.startHexes[trial].GetComponent<HexLogic>()
+				.column.ToString() + "-"
+				+ maze.startHexes[trial].GetComponent<HexLogic>()
+				.row.ToString() + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
 
 		choiceNum = 0;
 	}
 
 	public void WriteAction()
 	{
-		writer.WriteLine("Action " + maze.trial.ToString() + "."
-			+ choiceNum++.ToString() + ":" + spc
-			+ maze.lastChoice.ToString() + spc
-			+ BoolToString(maze.lastCorrect) + spc + maze.alpha + spc
-			+ string.Format("{0:N3}", Time.time - trialStart) + spc
-			+ string.Format("{0:N3}", Time.time - runStart));
+		if(mode == 1)
+			writer.WriteLine("Action " + maze.trial.ToString() + "."
+				+ choiceNum++.ToString() + ":" + spc
+				+ maze.lastChoice.ToString() + spc
+				+ BoolToString(maze.lastCorrect) + spc + maze.alpha + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	public void WriteAction(float dir)
+	{
+		if(mode == 0)
+			writer.WriteLine("Action " + maze.trial.ToString() + "."
+				+ choiceNum++.ToString() + ":" + spc
+				+ dir.ToString() + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	public void WriteChoiceStart()
 	{
 		int trial = maze.trial;
-		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
-			+ choiceNum.ToString() + ":" + spc
-			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
-			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
-			+ (maze.betas[trial, maze.moveCounter] * 60).ToString() + spc
-			+ string.Format("{0:N3}", Time.time - trialStart) + spc
-			+ string.Format("{0:N3}", Time.time - runStart));
+
+		if(mode == 1)
+			writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
+				+ choiceNum.ToString() + ":" + spc
+				+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
+				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
+				+ (maze.betas[trial, maze.moveCounter] * 60).ToString() + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
+		else if(mode == 0)
+			writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
+				+ choiceNum.ToString() + ":" + spc
+				+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
+				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	public void WriteGoal()

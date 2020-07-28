@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SimpleMovement : MonoBehaviour
 {
+	public LogWriter writer;
 
 	private CharacterController cc;
 
@@ -129,6 +130,8 @@ public class SimpleMovement : MonoBehaviour
 					moving = false;
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
+					else
+						writer.WriteChoiceStart();
 				}
 			}
 			else if(facing == 2 || facing == 3 || facing == 4)
@@ -139,6 +142,8 @@ public class SimpleMovement : MonoBehaviour
 					moving = false;
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
+					else
+						writer.WriteChoiceStart();
 				}
 			}
 			else { Debug.LogError("Invalid facing: " + facing); }
@@ -204,6 +209,9 @@ public class SimpleMovement : MonoBehaviour
 	// Select hexagon
 	public void StartMove()
 	{
+		if(mode == 0)
+			writer.WriteAction(facing * 60f);
+
 		moving = true;
 
 		// Find final x coord
