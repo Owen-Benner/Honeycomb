@@ -56,6 +56,11 @@ Output:
 	Gray screen
 		TrialTime (previous trial)
 		RunTime
+	Timeout
+		TrialNum
+		TrialTime
+		RunTime
+
 Output (explore):
 	Trial start
 		-beta
@@ -67,3 +72,28 @@ Output (explore):
 		Run time
 	Frame
 		-goal stuff
+
+Choice selection algorithm:
+	If last correct
+		Correct choice = goal dir, other choice = goal dir + beta
+		If other choice is off edge
+			Try replacing beta with 60 deg
+			Try inverting beta
+			Reuse beta
+		If other choice = last hex
+			Force choice
+			Reuse beta?
+	If last incorrect
+		If goal dir exactly = last hex
+			Force choice 60 deg off in last correct direction
+		Correct choice = goal dir
+			other choice = goal dir +/- 60
+			Select other choice closest to goal dir
+		If correct choice = last hex
+			both choices +/- 60
+			choose side closer to goal dir
+		If other choice = last hex
+			mirror over correct choice
+		If other choice = off edge
+			Force choice
+

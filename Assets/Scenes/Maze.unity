@@ -2902,6 +2902,7 @@ MonoBehaviour:
   prevHex: {fileID: 1462117135}
   leftHex: {fileID: 1462117135}
   rightHex: {fileID: 1462117135}
+  dummyHex: {fileID: 1462117135}
   goalHex: {fileID: 0}
   startHexes:
   - {fileID: 820685652}
@@ -5174,7 +5175,6 @@ MonoBehaviour:
   move: {fileID: 318258059}
   maze: {fileID: 975306111}
   fileName: Log.txt
-  runStart: 0
   mode: 0
   frameFreq: 24
 --- !u!114 &1462117139

@@ -168,6 +168,8 @@ public class SimpleMovement : MonoBehaviour
 
 	public void LeftChoice()
 	{
+		if(mazeLogic.leftFacing == -1)
+			return;
 		facing = mazeLogic.leftFacing;
 		mazeLogic.LeftChoice();
 		mazeLogic.lastFacing = facing;
@@ -176,6 +178,8 @@ public class SimpleMovement : MonoBehaviour
 
 	public void RightChoice()
 	{
+		if(mazeLogic.rightFacing == -1)
+			return;
 		facing = mazeLogic.rightFacing;
 		mazeLogic.RightChoice();
 		mazeLogic.lastFacing = facing;

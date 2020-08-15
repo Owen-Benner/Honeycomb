@@ -12,8 +12,6 @@ public class LogWriter : MonoBehaviour
 
 	public string fileName;
 
-	public float runStart;
-
 	public int mode;
 
 	public int frameFreq = 24;
@@ -23,6 +21,7 @@ public class LogWriter : MonoBehaviour
 
 	private float lastFrame;
 	private float frameTime;
+	private float runStart;
 	private float trialStart;
 
 	private string spc = " ";
@@ -191,6 +190,14 @@ public class LogWriter : MonoBehaviour
 	{
 		int trial = maze.trial;
 		writer.WriteLine("Gray_Screen " + trial.ToString() + ":" + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	public void WriteTimeout()
+	{
+		int trial = maze.trial;
+		writer.WriteLine("Timeout:" + spc + trial.ToString() + spc
 			+ string.Format("{0:N3}", Time.time - trialStart) + spc
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}

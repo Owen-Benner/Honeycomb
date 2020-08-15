@@ -10,8 +10,6 @@ public class MazeLogic : MonoBehaviour
 	public GameObject leftHex;
 	public GameObject rightHex;
 
-	public GameObject dummyHex;
-
 	public GameObject goalHex;
 	public GameObject[] startHexes;
 
@@ -74,7 +72,6 @@ public class MazeLogic : MonoBehaviour
 	private bool waiting = true;
 	private bool choosing = false;
 	private bool warning = false;
-	private bool rightNextInc = false;
 
 	// Awake is called when the script instance is being loaded
 	void Awake()
@@ -167,6 +164,8 @@ public class MazeLogic : MonoBehaviour
 		toGoal.y = 0;
 		goalDirExact = Vector3.SignedAngle(Vector3.forward, toGoal,
 			Vector3.up);
+		goalDir = Mathf.RoundToInt(goalDirExact / 60);
+		goalDir = (goalDir + 6) % 6;
 
 		if(lastCorrect)
 		{
@@ -177,132 +176,73 @@ public class MazeLogic : MonoBehaviour
 
 			if(betas[trial, moveCounter] > 0)
 			{
-				// TODO: Adjust for float rounding errors?
-				goalDir = Mathf.CeilToInt(goalDirExact / 60);
-				goalDir = (goalDir + 6) % 6;
 				leftFacing = goalDir;
 				rightFacing = leftFacing + betas[trial, moveCounter];
 
 				// TODO: Fix cases near edge of maze
 				rightCorrect = false;
 
+				LeftClip();
 				RightClip();
 
 				// Fix angles if wrong choice is off edge
 				// Assumes correct choice is on a hex
-				if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-					|| rightFacing == lastFacing - 3)
+				if(betas[trial, moveCounter] == 3)
 				{
-					//holdBeta = true;
-
-					/*
-					rightFacing = leftFacing + 1;
-					RightClip();
-
-					if(!CheckEdge(rightFacing))
+					forceChoice = CheckEdge(rightFacing);
+				}
+				else if(betas[trial, moveCounter] == 1
+					|| betas[trial, moveCounter] == 2)
+				{
+					while(!CheckEdge(rightFacing))
 					{
-						rightCorrect = true;
-
-						rightFacing = leftFacing;
-						leftFacing = rightFacing - betas[trial, moveCounter];
-						RightClip();
-						LeftClip();
-
-						if(!CheckEdge(leftFacing))
-						{
-							leftFacing = rightFacing - 1;
-							LeftClip();
-						}
+						--leftFacing;
+						--rightFacing;
 					}
-					*/
-
-					rightCorrect = true;
-
-					goalDir = Mathf.FloorToInt(goalDirExact / 60);
-					goalDir = (goalDir + 6) % 6;
-					rightFacing = goalDir;
-					leftFacing = rightFacing - betas[trial, moveCounter];
 
 					LeftClip();
-
-					if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						holdBeta = true;
-						forceChoice = true;
-					}
+					RightClip();
 				}
-
-				/*
-				if(rightFacing == lastFacing + 3
-					|| rightFacing == lastFacing - 3)
-					forceChoice = true;
-				*/
+				else
+				{
+					Debug.LogError("invalid beta: "
+						+ betas[trial, moveCounter]);
+				}
 
 				alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 			}
 			else if(betas[trial, moveCounter] < 0)
 			{
-				goalDir = Mathf.FloorToInt(goalDirExact / 60);
-				goalDir = (goalDir + 6) % 6;
 				rightFacing = goalDir;
-				leftFacing = rightFacing - betas[trial, moveCounter];
+				leftFacing = rightFacing + betas[trial, moveCounter];
 
 				// TODO: Fix cases near edge of maze
 				rightCorrect = true;
 
 				LeftClip();
+				RightClip();
 
-				// Fix angles if wrong choice is off edge
-				// Assumes correct choice is on a hex
-				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-					|| leftFacing == lastFacing - 3)
+				if(betas[trial, moveCounter] == -3)
 				{
-					//holdBeta = true;
-
-					/*
-					leftFacing = rightFacing - 1;
-					LeftClip();
-
-					if(!CheckEdge(leftFacing))
-					{
-						rightCorrect = false;
-
-						leftFacing = rightFacing;
-						rightFacing = leftFacing - betas[trial, moveCounter];
-						LeftClip();
-						RightClip();
-
-						if(!CheckEdge(rightFacing))
-						{
-							rightFacing = leftFacing + 1;
-							RightClip();
-						}
-					}
-					*/
-
-					rightCorrect = false;
-
-					goalDir = Mathf.CeilToInt(goalDirExact / 60);
-					goalDir = (goalDir + 6) % 6;
-					leftFacing = goalDir;
-					rightFacing = leftFacing + betas[trial, moveCounter];
-
-					RightClip();
-
-					if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						holdBeta = true;
-						forceChoice = true;
-					}
+					forceChoice = CheckEdge(rightFacing);
 				}
+				else if(betas[trial, moveCounter] == -1
+					|| betas[trial, moveCounter] == -2)
+				{
+					while(!CheckEdge(rightFacing))
+					{
+						++leftFacing;
+						++rightFacing;
+					}
 
-				/*
-				if(leftFacing == lastFacing + 3
-					|| leftFacing == lastFacing - 3)
-					forceChoice = true;
-				*/
+					LeftClip();
+					RightClip();
+				}
+				else
+				{
+					Debug.LogError("invalid beta: "
+						+ betas[trial, moveCounter]);
+				}
 
 				alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
 			}
@@ -314,153 +254,10 @@ public class MazeLogic : MonoBehaviour
 			if(!holdBeta)
 				++moveCounter;
 		}
-		else // Last incorrect
+		else
 		{
-			if(rightNextInc)
-			{
-				goalDir = Mathf.CeilToInt(goalDirExact / 60);
-				goalDir = (goalDir + 6) % 6;
-				leftFacing = goalDir;
-				rightFacing = leftFacing + betas[trial, moveCounter];
-
-				rightCorrect = false;
-
-				RightClip();
-
-				if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-					|| rightFacing == lastFacing - 3)
-				{
-					rightNextInc = !rightNextInc;
-
-					goalDir = Mathf.FloorToInt(goalDirExact / 60);
-					goalDir = (goalDir + 6) % 6;
-					rightFacing = goalDir;
-					leftFacing = rightFacing - 1;
-
-					rightCorrect = true;
-
-					LeftClip();
-
-					if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						forceChoice = true;
-					}
-				}
-			}
-			else
-			{
-				goalDir = Mathf.FloorToInt(goalDirExact / 60);
-				goalDir = (goalDir + 6) % 6;
-				rightFacing = goalDir;
-				leftFacing = rightFacing - 1;
-
-				rightCorrect = true;
-
-				LeftClip();
-
-				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-					|| leftFacing == lastFacing - 3)
-				{
-					rightNextInc = !rightNextInc;
-
-					goalDir = Mathf.CeilToInt(goalDirExact / 60);
-					goalDir = (goalDir + 6) % 6;
-					leftFacing = goalDir;
-					rightFacing = leftFacing + betas[trial, moveCounter];
-
-					rightCorrect = false;
-
-					RightClip();
-
-					if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						forceChoice = true;
-					}
-				}
-			}
-			/*
-			if(Mathf.Approximately((float) lastFacing * 60, goalDirExact))
-			{
-				forceChoice = true;
-				if(!rightCorrect)
-				{
-					leftFacing = goalDir - 1;
-					LeftClip();
-				}
-				else
-				{
-					rightFacing = goalDir + 1;
-					RightClip();
-				}
-			}
-			else
-			*/
-			/*
-			{
-				leftFacing = Mathf.FloorToInt(goalDirExact / 60f);
-				rightFacing = leftFacing + 1; // Biased right?
-				LeftClip();
-				RightClip();
-				rightCorrect = goalDirExact % 60f > 30f; // Biased?
-
-				if(rightCorrect)
-				{
-					if(rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						--rightFacing;
-						--leftFacing;
-						RightClip();
-						LeftClip();
-					}
-					if(leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						++rightFacing;
-						++leftFacing;
-						RightClip();
-						LeftClip();
-						rightCorrect = false;
-					}
-				}
-				else
-				{
-					if(leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						++leftFacing;
-						++rightFacing;
-						LeftClip();
-						RightClip();
-					}
-					if(rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						--leftFacing;
-						--rightFacing;
-						LeftClip();
-						RightClip();
-						rightCorrect = true;
-					}
-				}
-				
-				if(rightCorrect)
-				{
-					if(!CheckEdge(leftFacing))
-						forceChoice = true;
-				}
-				else
-				{
-					if(!CheckEdge(rightFacing))
-						forceChoice = false;
-				}
-			}
-			*/
-			/*
 			// TODO: Fix cases near edge of maze
-			// If direction of goal doesn't lead into previous hex
+			// If direction of goal doesn't lead into previous hex.
 			if(goalDir + 3 != lastFacing && goalDir -3 != lastFacing)
 			{
 				if(rightCorrect)
@@ -480,7 +277,7 @@ public class MazeLogic : MonoBehaviour
 					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 				}
 			}
-			// If direction of goal leads into previous hex
+			// If direction of goal leads into previous hex.
 			else
 			{
 				// TODO: Fix cases where alpha ~= 0
@@ -501,28 +298,14 @@ public class MazeLogic : MonoBehaviour
 					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
 				}
 			}
-			*/
 		}
 
-		// Assure valid facings
 		LeftClip();
 		RightClip();
-
-		if(forceChoice)
-		{
-			if(rightCorrect)
-				leftFacing = -1;
-			else
-				rightFacing = -1;
-		}
 
 		// Find choice hexes
 		switch(leftFacing)
 		{
-			case -1:
-				// For forced choice
-				leftHex = dummyHex;
-				break;
 			case 0:
 			case 6:
 				leftHex = maze[column, row + 1];
@@ -549,10 +332,6 @@ public class MazeLogic : MonoBehaviour
 		}
 		switch(rightFacing)
 		{
-			case -1:
-				// For forced choice
-				rightHex = dummyHex;
-				break;
 			case 0:
 			case 6:
 				rightHex = maze[column, row + 1];
@@ -580,14 +359,6 @@ public class MazeLogic : MonoBehaviour
 		// Highlight
 		leftHex.BroadcastMessage("SetLeft");
 		rightHex.BroadcastMessage("SetRight");
-
-		/*
-		if(forceChoice)
-		{
-			ForceChoice();
-			forceChoice = false;
-		}
-		*/
 	}
 
 	public void UpdateHexes()
