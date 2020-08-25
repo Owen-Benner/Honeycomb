@@ -43,6 +43,7 @@ public class MazeLogic : MonoBehaviour
 	public int leftFacing;
 	public int rightFacing;
 
+	public int run;
 	public int trial = 0;
 
 	public int lastChoice;
@@ -66,10 +67,13 @@ public class MazeLogic : MonoBehaviour
 	public float choiceTime;
 	public float timeLimit;
 
+	private int mode;
+
+
 	private float choiceStartTime;
 	private float timerStart = 0f;
 
-	private int mode;
+	private int beta;
 
 	private bool waiting = true;
 	private bool choosing = false;
@@ -97,14 +101,14 @@ public class MazeLogic : MonoBehaviour
 			maze[6,i] = col6[i];
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+	// Start is called before the first frame update
+	void Start()
+	{
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
+	// Update is called once per frame
+	void Update()
+	{
 		if(waiting)
 		{
 			if(Input.GetKey("5"))
@@ -136,20 +140,21 @@ public class MazeLogic : MonoBehaviour
 		{
 			if(choosing && Time.time - choiceStartTime >= choiceTime)
 			{
-				ForceChoice();
+				AutoChoice();
 			}
 			else if(choosing && !warning && Time.time - choiceStartTime
 				>= warnTime)
 			{
 				hud.SetWarn();
 				warning = true;
+				writer.WriteWarning();
 			}
 			else if(endTrial && Time.time - endTime > endDelay)
 			{
 				StartGray();
 			}
 		}
-    }
+	}
 
 	void StartRun()
 	{
@@ -169,6 +174,14 @@ public class MazeLogic : MonoBehaviour
 		goalDirExact = Vector3.SignedAngle(Vector3.forward, toGoal,
 			Vector3.up);
 
+		goalDir = Mathf.RoundToInt(goalDirExact / 60);
+		bool zeroCase = false;
+		if(Mathf.Approximately(goalDirExact / 60, goalDir))
+		{
+			Debug.Log(".0 case");
+			zeroCase = true;
+		}
+
 		if(lastCorrect)
 		{
 			// Find choice angles
@@ -178,8 +191,9 @@ public class MazeLogic : MonoBehaviour
 
 			if(betas[trial, moveCounter] > 0)
 			{
-				// TODO: Adjust for float rounding errors?
-				goalDir = Mathf.CeilToInt(goalDirExact / 60);
+				// TODO: Adjust for float rounding errors? Done?
+				if(!zeroCase)
+					goalDir = Mathf.CeilToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
 				leftFacing = goalDir;
 				rightFacing = leftFacing + betas[trial, moveCounter];
@@ -219,10 +233,12 @@ public class MazeLogic : MonoBehaviour
 
 					rightCorrect = true;
 
-					goalDir = Mathf.FloorToInt(goalDirExact / 60);
+					if(!zeroCase)
+						goalDir = Mathf.FloorToInt(goalDirExact / 60);
 					goalDir = (goalDir + 6) % 6;
 					rightFacing = goalDir;
 					leftFacing = rightFacing - betas[trial, moveCounter];
+					beta = -betas[trial, moveCounter];
 
 					LeftClip();
 
@@ -233,6 +249,8 @@ public class MazeLogic : MonoBehaviour
 						forceChoice = true;
 					}
 				}
+				else
+					beta = betas[trial, moveCounter];
 
 				/*
 				if(rightFacing == lastFacing + 3
@@ -244,7 +262,8 @@ public class MazeLogic : MonoBehaviour
 			}
 			else if(betas[trial, moveCounter] < 0)
 			{
-				goalDir = Mathf.FloorToInt(goalDirExact / 60);
+				if(!zeroCase)
+					goalDir = Mathf.FloorToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
 				rightFacing = goalDir;
 				leftFacing = rightFacing + betas[trial, moveCounter];
@@ -254,7 +273,7 @@ public class MazeLogic : MonoBehaviour
 
 				LeftClip();
 
-				//roro Fix angles if wrong choice is off edge
+				// Fix angles if wrong choice is off edge
 				// Assumes correct choice is on a hex
 				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
 					|| leftFacing == lastFacing - 3)
@@ -284,10 +303,12 @@ public class MazeLogic : MonoBehaviour
 
 					rightCorrect = false;
 
-					goalDir = Mathf.CeilToInt(goalDirExact / 60);
+					if(!zeroCase)
+						goalDir = Mathf.CeilToInt(goalDirExact / 60);
 					goalDir = (goalDir + 6) % 6;
 					leftFacing = goalDir;
 					rightFacing = leftFacing - betas[trial, moveCounter];
+					beta = -betas[trial, moveCounter];
 
 					RightClip();
 
@@ -298,6 +319,7 @@ public class MazeLogic : MonoBehaviour
 						forceChoice = true;
 					}
 				}
+				beta = betas[trial, moveCounter];
 
 				/*
 				if(leftFacing == lastFacing + 3
@@ -326,6 +348,8 @@ public class MazeLogic : MonoBehaviour
 				|| Mathf.Approximately(goalDirExact, (float) (lastFacing - 3)
 				* 60))
 			{
+				Debug.Log("180 degree case");
+
 				if(lastChoice == 1)
 				{
 					rightFacing = goalDir + 1;
@@ -343,7 +367,8 @@ public class MazeLogic : MonoBehaviour
 			}
 			else if(rightNextInc)
 			{
-				goalDir = Mathf.CeilToInt(goalDirExact / 60);
+				if(!zeroCase)
+					goalDir = Mathf.CeilToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
 				leftFacing = goalDir;
 				rightFacing = leftFacing + 1;
@@ -357,10 +382,12 @@ public class MazeLogic : MonoBehaviour
 				{
 					rightNextInc = !rightNextInc;
 
-					goalDir = Mathf.FloorToInt(goalDirExact / 60);
+					if(!zeroCase)
+						goalDir = Mathf.FloorToInt(goalDirExact / 60);
 					goalDir = (goalDir + 6) % 6;
 					rightFacing = goalDir;
 					leftFacing = rightFacing - 1;
+					beta = -1;
 
 					rightCorrect = true;
 
@@ -372,10 +399,14 @@ public class MazeLogic : MonoBehaviour
 						forceChoice = true;
 					}
 				}
+				else
+					beta = 1;
+				rightNextInc = !rightNextInc;
 			}
 			else // Go left
 			{
-				goalDir = Mathf.FloorToInt(goalDirExact / 60);
+				if(!zeroCase)
+					goalDir = Mathf.FloorToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
 				rightFacing = goalDir;
 				leftFacing = rightFacing - 1;
@@ -389,10 +420,12 @@ public class MazeLogic : MonoBehaviour
 				{
 					rightNextInc = !rightNextInc;
 
-					goalDir = Mathf.CeilToInt(goalDirExact / 60);
+					if(!zeroCase)
+						goalDir = Mathf.CeilToInt(goalDirExact / 60);
 					goalDir = (goalDir + 6) % 6;
 					leftFacing = goalDir;
 					rightFacing = leftFacing + 1;
+					beta = 1;
 
 					rightCorrect = false;
 
@@ -404,6 +437,9 @@ public class MazeLogic : MonoBehaviour
 						forceChoice = true;
 					}
 				}
+				else
+					beta = -1;
+				rightNextInc = !rightNextInc;
 			}
 			/*
 			if(Mathf.Approximately(((float) lastFacing * 60 + 180) % 360, 
@@ -546,6 +582,7 @@ public class MazeLogic : MonoBehaviour
 			else
 				rightFacing = -1;
 			forceChoice = false;
+			beta = 0;
 		}
 
 		// Find choice hexes
@@ -616,7 +653,7 @@ public class MazeLogic : MonoBehaviour
 		/*
 		if(forceChoice)
 		{
-			ForceChoice();
+			AutoChoice();
 			forceChoice = false;
 		}
 		*/
@@ -649,7 +686,7 @@ public class MazeLogic : MonoBehaviour
 			}
 			else
 			{
-				writer.WriteChoiceStart();
+				writer.WriteChoiceStart(beta);
 				choosing = true;
 				choiceStartTime = Time.time;
 			}
@@ -684,7 +721,7 @@ public class MazeLogic : MonoBehaviour
 	}
 
 	// Call if player chooses left
-	public void LeftChoice()
+	public void LeftChoice(bool auto)
 	{
 		if(warning)
 		{
@@ -693,12 +730,15 @@ public class MazeLogic : MonoBehaviour
 		}
 		lastChoice = 1;
 		lastCorrect = !rightCorrect;
-		writer.WriteAction();
+		if(auto)
+			writer.WriteAutoAction();
+		else
+			writer.WriteAction();
 		choosing = false;
 	}
 
 	// Call if player chooses right
-	public void RightChoice()
+	public void RightChoice(bool auto)
 	{
 		if(warning)
 		{
@@ -707,7 +747,10 @@ public class MazeLogic : MonoBehaviour
 		}
 		lastChoice = 2;
 		lastCorrect = rightCorrect;
-		writer.WriteAction();
+		if(auto)
+			writer.WriteAutoAction();
+		else
+			writer.WriteAction();
 		choosing = false;
 	}
 
@@ -764,10 +807,10 @@ public class MazeLogic : MonoBehaviour
 
 	public void StartTrial()
 	{
-		if(trial % 2 == 1)
-			rightNextInc = true;
-		else
+		if(run % 2 == 1)
 			rightNextInc = false;
+		else
+			rightNextInc = true;
 		first = true;
 		gray = false;
 		writer.SetGray(false);
@@ -804,12 +847,12 @@ public class MazeLogic : MonoBehaviour
 		return ret;
 	}
 
-	private void ForceChoice()
+	private void AutoChoice()
 	{
 		if(rightCorrect)
-			move.RightChoice();
+			move.RightChoice(true);
 		else
-			move.LeftChoice();
+			move.LeftChoice(true);
 	}
 
 	private void LeftClip()

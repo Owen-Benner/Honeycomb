@@ -70,11 +70,11 @@ public class SimpleMovement : MonoBehaviour
 		{
 			if(Input.GetKey(left) && !Input.GetKey(right))
 			{
-				LeftChoice();
+				LeftChoice(false);
 			}
 			else if(Input.GetKey(right) && !Input.GetKey(left))
 			{
-				RightChoice();
+				RightChoice(false);
 			}
 		}
 
@@ -131,7 +131,7 @@ public class SimpleMovement : MonoBehaviour
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
 					else
-						writer.WriteChoiceStart();
+						writer.WriteChoiceStart(0);
 				}
 			}
 			else if(facing == 2 || facing == 3 || facing == 4)
@@ -143,7 +143,7 @@ public class SimpleMovement : MonoBehaviour
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
 					else
-						writer.WriteChoiceStart();
+						writer.WriteChoiceStart(0);
 				}
 			}
 			else { Debug.LogError("Invalid facing: " + facing); }
@@ -166,22 +166,22 @@ public class SimpleMovement : MonoBehaviour
 		}
 	}
 
-	public void LeftChoice()
+	public void LeftChoice(bool auto)
 	{
 		if(mazeLogic.leftFacing == -1)
 			return;
 		facing = mazeLogic.leftFacing;
-		mazeLogic.LeftChoice();
+		mazeLogic.LeftChoice(auto);
 		mazeLogic.lastFacing = facing;
 		StartMove();
 	}
 
-	public void RightChoice()
+	public void RightChoice(bool auto)
 	{
 		if(mazeLogic.rightFacing == -1)
 			return;
 		facing = mazeLogic.rightFacing;
-		mazeLogic.RightChoice();
+		mazeLogic.RightChoice(auto);
 		mazeLogic.lastFacing = facing;
 		StartMove();
 	}

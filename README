@@ -1,3 +1,11 @@
+Terms:
+	Choice—Option presented to player
+	Action—Decision made by player
+	Alpha—Angle between action direction and direction to goal
+	Beta—Angle between available choices
+	Run—Full execution of program
+	Trial—One trip through the maze
+
 Configuration:
 	Participant number
 	Run number
@@ -20,7 +28,7 @@ Configuration:
 	Start hexes (one per trial, column-row, spaces between)
 	Goal hex (column-row)
 
-Output:
+Output (maze):
 	Frame
 		Frame number
 		xPos
@@ -37,16 +45,16 @@ Output:
 		Starting hexagon number
 		Current beta
 		RunTime
-		Action (count properly)
+	Action
 		Color of option chosen (1 = blue, 2 = purple)
-		isCorrect (int)
+		isCorrect (int, 0 = false, 1 = true)
 		Alpha (angle between choice dir and goal dir)
 		TrialTime (exact?)
 		RunTime
-	Choice start (don’t show with trial start)
+	Choice start (doesn’t show with trial start)
 		Choice number
 		Hex number
-		Current beta
+		Beta
 		TrialTime
 		RunTime
 	On reaching goal
@@ -61,40 +69,59 @@ Output:
 		TrialTime
 		RunTime
 	Action
+		Color of option chosen (1 = blue, 2 = purple)
+		isCorrect (int)
+		Alpha
+		TrialTime (exact?)
+		RunTime
 
 Output (explore):
 	Trial start
-		-beta
+		Trial num
+		Hex num
+		RunTime
 	Choice start
-		-beta
+		Choice num
+		Hex num
+		TrialTime
+		RunTime
 	Action
 		Move dir
-		Trial time
-		Run time
+		TrialTime
+		RunTime
 	Frame
-		-goal stuff
+		Frame num
+		xPos
+		yPos
+		Facing
+		TrialTime
+		RunTime
 
 Choice selection algorithm:
-	If last correct
-		Correct choice = goal dir, other choice = goal dir + beta
-		If other choice is off edge
-			Try replacing beta with 60 deg
-			Try inverting beta
-			Reuse beta
-		If other choice = last hex
-			Force choice
-			Reuse beta?
-	If last incorrect
-		If goal dir exactly = last hex
-			Force choice 60 deg off in last correct direction
-		Correct choice = goal dir
-			other choice = goal dir +/- 60
-			Select other choice closest to goal dir
-		If correct choice = last hex
-			both choices +/- 60
-			choose side closer to goal dir
-		If other choice = last hex
-			mirror over correct choice
-		If other choice = off edge
-			Force choice
-
+	After correct choice
+		For positive beta, round correct choice to right of goal
+			for negative beta, left of goal
+			Angle from goal to incorrect choice as large as
+			...possible
+		If incorrect choice leads off map or to prev hex, flip
+		...both choices across player-goal axis
+			Beta index advances
+			If choice flipped and still bad, force new correct
+			...choice
+	Following incorrect choice
+		Always 60 deg between choices
+		Alternate left vs right
+			Start left on odd trials, right on even
+			Reset at trial start
+		If incorrect choice leads off map or to prev hex, flip
+		...both choices across player-goal axis
+			If choice flipped and still bad, force choice
+			Advance left/right continuity an extra step
+			...(different from after correct)
+	When alpha == 0 following 180 degree incorrect choice, offer
+	...player a 60 degree choice, not including the hex in the
+	...direction of the goal, with both options on the side
+	...corresponding to the left/right after incorrect continuity.
+		Advance left/right after incorrect continuity.
+	If a forced choice leads onto the goal, move to next beta and try
+	...again

@@ -84,6 +84,8 @@ public class FileReader : MonoBehaviour
 		move.mode = mode;
 		maze.SetMode(mode);
 
+		maze.run = int.Parse(runStr);
+
 		//logReader.mode = mode;
 		//logReader.partCode = partStr;
 		//logReader.runNum = writer.runNum;

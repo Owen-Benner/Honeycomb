@@ -140,7 +140,20 @@ public class LogWriter : MonoBehaviour
 			writer.WriteLine("Action " + maze.trial.ToString() + "."
 				+ choiceNum++.ToString() + ":" + spc
 				+ maze.lastChoice.ToString() + spc
-				+ BoolToString(maze.lastCorrect) + spc + maze.alpha + spc
+				+ BoolToString(maze.lastCorrect) + spc
+				+ string.Format("{0:N3}", maze.alpha) + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	public void WriteAutoAction()
+	{
+		if(mode == 1)
+			writer.WriteLine("Auto_Action " + maze.trial.ToString() + "."
+				+ choiceNum++.ToString() + ":" + spc
+				+ maze.lastChoice.ToString() + spc
+				+ BoolToString(maze.lastCorrect) + spc
+				+ string.Format("{0:N3}", maze.alpha) + spc
 				+ string.Format("{0:N3}", Time.time - trialStart) + spc
 				+ string.Format("{0:N3}", Time.time - runStart));
 	}
@@ -155,7 +168,7 @@ public class LogWriter : MonoBehaviour
 				+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
-	public void WriteChoiceStart()
+	public void WriteChoiceStart(int beta)
 	{
 		int trial = maze.trial;
 
@@ -164,7 +177,7 @@ public class LogWriter : MonoBehaviour
 				+ choiceNum.ToString() + ":" + spc
 				+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
 				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
-				+ (maze.betas[trial, maze.moveCounter] * 60).ToString() + spc
+				+ (beta * 60).ToString() + spc
 				+ string.Format("{0:N3}", Time.time - trialStart) + spc
 				+ string.Format("{0:N3}", Time.time - runStart));
 		else if(mode == 0)
@@ -174,6 +187,8 @@ public class LogWriter : MonoBehaviour
 				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
 				+ string.Format("{0:N3}", Time.time - trialStart) + spc
 				+ string.Format("{0:N3}", Time.time - runStart));
+		else
+			Debug.LogError("Invalid mode.");
 	}
 
 	public void WriteGoal()
@@ -198,6 +213,15 @@ public class LogWriter : MonoBehaviour
 	{
 		int trial = maze.trial;
 		writer.WriteLine("Timeout:" + spc + trial.ToString() + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	public void WriteWarning()
+	{
+		int trial = maze.trial;
+		writer.WriteLine("Warning " + trial.ToString() + "."
+			+ choiceNum.ToString() + ":" + spc
 			+ string.Format("{0:N3}", Time.time - trialStart) + spc
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}
