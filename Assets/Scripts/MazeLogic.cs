@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MazeLogic : MonoBehaviour
 {
+	public GameObject player;
+	public GameObject skyCam;
+	public GameObject plus;
+	public MapLogic map;
 
 	public GameObject curHex;
 	public GameObject prevHex;
@@ -68,7 +72,6 @@ public class MazeLogic : MonoBehaviour
 	public float timeLimit;
 
 	private int mode;
-
 
 	private float choiceStartTime;
 	private float timerStart = 0f;
@@ -182,6 +185,7 @@ public class MazeLogic : MonoBehaviour
 			zeroCase = true;
 		}
 
+//StartLoop:
 		if(lastCorrect)
 		{
 			// Find choice angles
@@ -350,6 +354,7 @@ public class MazeLogic : MonoBehaviour
 			{
 				Debug.Log("180 degree case");
 
+				/*
 				if(lastChoice == 1)
 				{
 					rightFacing = goalDir + 1;
@@ -364,6 +369,25 @@ public class MazeLogic : MonoBehaviour
 					forceChoice = true;
 					rightCorrect = false;
 				}
+				*/
+
+				if(rightNextInc)
+				{
+					leftFacing = goalDir + 1;
+					rightFacing = goalDir + 2;
+					LeftClip();
+					RightClip();
+					rightCorrect = false;
+				}
+				else
+				{
+					rightFacing = goalDir - 1;
+					leftFacing = goalDir - 2;
+					RightClip();
+					LeftClip();
+					rightCorrect = true;
+				}
+				rightNextInc = !rightNextInc;
 			}
 			else if(rightNextInc)
 			{
@@ -581,7 +605,6 @@ public class MazeLogic : MonoBehaviour
 				leftFacing = -1;
 			else
 				rightFacing = -1;
-			forceChoice = false;
 			beta = 0;
 		}
 
@@ -645,6 +668,25 @@ public class MazeLogic : MonoBehaviour
 				Debug.LogError("Invalid facing: " + rightFacing);
 				break;
 		}
+
+		/*
+		if(forceChoice)
+		{
+			if(rightCorrect && rightHex == goalHex)
+			{
+				++moveCounter;
+				Debug.Log("Looping");
+				goto StartLoop;
+			}
+			else if(!rightCorrect && leftHex == goalHex)
+			{
+				++moveCounter;
+				Debug.Log("Looping");
+				goto StartLoop;
+			}
+		}
+		*/
+		forceChoice = false;
 
 		// Highlight
 		leftHex.BroadcastMessage("SetLeft");
@@ -718,6 +760,17 @@ public class MazeLogic : MonoBehaviour
 	public void SetMode(int m)
 	{
 		mode = m;
+		if(m == 2)
+		{
+			skyCam.SetActive(true);
+			player.SetActive(false);
+			plus.SetActive(false);
+			map.enabled = true;
+			writer.enabled = false;
+			BroadcastMessage("SetExplore");
+			map.DrawMap();
+			this.enabled = false;
+		}
 	}
 
 	// Call if player chooses left
@@ -807,7 +860,7 @@ public class MazeLogic : MonoBehaviour
 
 	public void StartTrial()
 	{
-		if(run % 2 == 1)
+		if(trial % 2 == 1)
 			rightNextInc = false;
 		else
 			rightNextInc = true;

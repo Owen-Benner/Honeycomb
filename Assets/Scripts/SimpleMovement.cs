@@ -102,15 +102,19 @@ public class SimpleMovement : MonoBehaviour
 		if(cooldown > 0)
 			cooldown -= Time.deltaTime;
 
-		if(canTurn && Input.GetAxis("Horizontal") > 0.1f && cooldown <= 0)
+		if(!moving)
 		{
-			rotate += rotateInterval * Vector3.up;
-			cooldown = rotateCooldown;
-		}
-		else if(canTurn && Input.GetAxis("Horizontal") < -0.1f && cooldown <= 0)
-		{
-			rotate -= rotateInterval * Vector3.up;
-			cooldown = rotateCooldown;
+			if(canTurn && Input.GetAxis("Horizontal") > 0.1f && cooldown <= 0)
+			{
+				rotate += rotateInterval * Vector3.up;
+				cooldown = rotateCooldown;
+			}
+			else if(canTurn && Input.GetAxis("Horizontal") < -0.1f
+				&& cooldown <= 0)
+			{
+				rotate -= rotateInterval * Vector3.up;
+				cooldown = rotateCooldown;
+			}
 		}
 
 		// Determine if at destination

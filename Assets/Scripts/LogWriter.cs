@@ -59,8 +59,7 @@ public class LogWriter : MonoBehaviour
         try
         {
             lastRunReader = new StreamReader(fileName);
-            Debug.LogError("Repeated log filename! Update Config.txt or remove"
-                    + " last log file from directory.");
+            Debug.LogError("Repeated log filename! Update Config.txt or remove last log file from directory.");
             Application.Quit();
             return;
         }

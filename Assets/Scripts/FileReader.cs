@@ -107,6 +107,8 @@ public class FileReader : MonoBehaviour
 			writer.fileName = partStr + "_explore_" + runStr + ".xml";
 		else if(mode == 1)
 			writer.fileName = partStr + "_maze_" + runStr + ".xml";
+		else
+			return;
 
 		writer.InitWriter();
 
