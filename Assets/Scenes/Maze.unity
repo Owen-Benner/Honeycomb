@@ -2669,7 +2669,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &803294261
 PrefabInstance:
@@ -3018,13 +3018,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 909656839}
-  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 500, y: 10, z: 495}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.40000004, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
+  m_Father: {fileID: 1462117138}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!4 &932004569 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2793424837218825710, guid: a94fcc053b20918a78f7962838c8efdd,
@@ -3273,7 +3273,7 @@ MonoBehaviour:
   redArrow: {fileID: 2078280958}
   greenArrow: {fileID: 909656839}
   number: {fileID: 769058549}
-  maze: {fileID: 0}
+  maze: {fileID: 975306111}
   fileName: 
 --- !u!1001 &978599270
 PrefabInstance:
@@ -5455,6 +5455,12 @@ MonoBehaviour:
   fileName: Log.txt
   mode: 0
   frameFreq: 24
+--- !u!4 &1462117138 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2793424837218825710, guid: a94fcc053b20918a78f7962838c8efdd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1462117134}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1462117139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7514,13 +7520,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2078280958}
-  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 500, y: 10, z: 505}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalScale: {x: 0.40000004, y: 0.40000004, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
+  m_Father: {fileID: 1462117138}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &2090505712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 426041717131958912, guid: a94fcc053b20918a78f7962838c8efdd,

@@ -112,6 +112,8 @@ public class MazeLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if(mode == 2 || mode == 3)
+			return;
 		if(waiting)
 		{
 			if(Input.GetKey("5"))
@@ -760,7 +762,7 @@ public class MazeLogic : MonoBehaviour
 	public void SetMode(int m)
 	{
 		mode = m;
-		if(m == 2)
+		if(m == 2 || m == 3)
 		{
 			skyCam.SetActive(true);
 			player.SetActive(false);
@@ -769,7 +771,7 @@ public class MazeLogic : MonoBehaviour
 			writer.enabled = false;
 			BroadcastMessage("SetExplore");
 			map.DrawMap();
-			this.enabled = false;
+			//this.enabled = false;
 		}
 	}
 
