@@ -783,6 +783,14 @@ public class MazeLogic : MonoBehaviour
 			hud.ClearWarn();
 			warning = false;
 		}
+		if(rightCorrect)
+		{
+			alpha += 60 * beta;
+			if(alpha > 180)
+				alpha -= 360;
+			else if(alpha < -180)
+				alpha += 360;
+		}
 		lastChoice = 1;
 		lastCorrect = !rightCorrect;
 		if(auto)
@@ -799,6 +807,14 @@ public class MazeLogic : MonoBehaviour
 		{
 			hud.ClearWarn();
 			warning = false;
+		}
+		if(!rightCorrect)
+		{
+			alpha += 60 * beta;
+			if(alpha > 180)
+				alpha -= 360;
+			else if(alpha < -180)
+				alpha += 360;
 		}
 		lastChoice = 2;
 		lastCorrect = rightCorrect;

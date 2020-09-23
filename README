@@ -1,7 +1,7 @@
 Terms:
 	Choice—Option presented to player
 	Action—Decision made by player
-	Alpha—Angle between action direction and direction to goal
+	Alpha—Angle from action direction to direction to goal
 	Beta—Angle between available choices
 	Run—Full execution of program
 	Trial—One trip through the maze
