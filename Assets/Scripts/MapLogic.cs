@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapLogic : MonoBehaviour
 {
@@ -15,7 +16,13 @@ public class MapLogic : MonoBehaviour
 	public MazeLogic maze;
 	public SimpleMovement move;
 
+	public Text trialInfo;
+	public Text betas;
+
 	public string fileName;
+
+	private int curTrial = 0;
+	//private int maxTrial;
 
     // Start is called before the first frame update
     void Start()
@@ -31,8 +38,13 @@ public class MapLogic : MonoBehaviour
 
 	public void DrawMap()
 	{
-		StreamReader reader = new StreamReader("opb_maze_14.xml");
+		StreamReader reader = new StreamReader(fileName);
 		Debug.Log("Drawing");
+
+		maze.BroadcastMessage("SetExplore");
+
+		trialInfo.text = fileName;
+		trialInfo.enabled = true;
 
 		try
 		{
@@ -43,18 +55,30 @@ public class MapLogic : MonoBehaviour
 				string line = reader.ReadLine();
 				string [] lineArr = line.Split(' ');
 				Debug.Log(lineArr[0]);
-				if(lineArr[0] == "Trial")
+				if(lineArr[0] == "Trial" && int.Parse(lineArr[1].Trim(':'))
+					== curTrial)
 				{
+					trialInfo.text += "\n" + "Trial " + curTrial;
 					string [] coords = lineArr[2].Split('-');
 					Debug.Log(int.Parse(coords[0]) + "-"
 						+ int.Parse(coords[1]));
 					hex = maze.maze[int.Parse(coords[0]),
 						int.Parse(coords[1])];
 					hex.BroadcastMessage("SetRight");
+					betas.enabled = true;
+					betas.text = "0: " + lineArr[3] + "\n";
 					Debug.Log("Breaking");
 					break;
 				}
+				if(reader.EndOfStream)
+				{
+					curTrial = 0;
+					reader.Close();
+					reader = new StreamReader(fileName);
+				}
 			}
+			++curTrial;
+
 			float angle = 0;
 			while(true)
 			{
@@ -107,6 +131,8 @@ public class MapLogic : MonoBehaviour
 					string [] coords = lineArr[2].Split('-');
 					hex = maze.maze[int.Parse(coords[0]),
 						int.Parse(coords[1])];
+					betas.text = betas.text + lineArr[1].Split('.')[1]
+						+ " " + lineArr[3] + "\n";
 				}
 				// TODO: Make this better.
 				else if(lineArr[0] == "Frame")

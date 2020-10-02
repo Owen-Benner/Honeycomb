@@ -10,7 +10,7 @@ public class FileReader : MonoBehaviour
 	public SimpleMovement move;
 	public MazeLogic maze;
 	public LogWriter writer;
-	//public LogReader logReader;
+	public MapLogic map;
 	//public EyeDots eyeDots;
 
 	private int mode;
@@ -81,10 +81,30 @@ public class FileReader : MonoBehaviour
 
 	void Start()
 	{
-		move.mode = mode;
-		maze.SetMode(mode);
+		if(mode == 0)
+		{
+			writer.fileName = partStr + "_explore_" + runStr + ".xml";
+		}
+		else if(mode == 1)
+		{
+			writer.fileName = partStr + "_maze_" + runStr + ".xml";
+		}
+		else if(mode == 2)
+		{
+			map.fileName = partStr + "_explore_" + runStr + ".xml";
+		}
+		else if(mode == 3)
+		{
+			map.fileName = partStr + "_maze_" + runStr + ".xml";
+		}
 
+		move.mode = mode;
+
+		maze.SetMode(mode);
 		maze.run = int.Parse(runStr);
+
+		if(mode == 2 || mode == 3)
+			return;
 
 		//logReader.mode = mode;
 		//logReader.partCode = partStr;
@@ -102,14 +122,6 @@ public class FileReader : MonoBehaviour
 		*/
 
 		writer.mode = mode;
-
-		if(mode == 0)
-			writer.fileName = partStr + "_explore_" + runStr + ".xml";
-		else if(mode == 1)
-			writer.fileName = partStr + "_maze_" + runStr + ".xml";
-		else
-			return;
-
 		writer.InitWriter();
 
 		try

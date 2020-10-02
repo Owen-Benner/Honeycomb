@@ -655,7 +655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &108358137
 AudioListener:
   m_ObjectHideFlags: 0
@@ -663,7 +663,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108358136}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &108358138
 Camera:
   m_ObjectHideFlags: 0
@@ -671,7 +671,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108358136}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -753,11 +753,11 @@ RectTransform:
   m_Father: {fileID: 1282041354}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 464, y: 336}
-  m_SizeDelta: {x: 128, y: 128}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 112, y: 768}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &110411219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,7 +765,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 110411217}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
@@ -780,18 +780,18 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 64
+    m_FontSize: 32
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 6
+    m_MinSize: 3
     m_MaxSize: 80
-    m_Alignment: 2
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 
 --- !u!222 &110411220
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3234,9 +3234,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 318258056}
-  skyCam: {fileID: 108358136}
-  plus: {fileID: 1405126821}
-  map: {fileID: 975306112}
   curHex: {fileID: 820685652}
   prevHex: {fileID: 1462117135}
   leftHex: {fileID: 1462117135}
@@ -3310,8 +3307,12 @@ MonoBehaviour:
   - {fileID: 1048195924}
   playerCam: {fileID: 541057018}
   grayCam: {fileID: 733857528}
+  skyCam: {fileID: 108358138}
   playerCanvas: {fileID: 2042499246}
   grayCanvas: {fileID: 1276511900}
+  mapCanvas: {fileID: 1282041353}
+  plus: {fileID: 1405126823}
+  map: {fileID: 975306112}
   hud: {fileID: 2042499248}
   writer: {fileID: 1462117136}
   move: {fileID: 318258059}
@@ -3355,7 +3356,9 @@ MonoBehaviour:
   number: {fileID: 769058549}
   maze: {fileID: 975306111}
   move: {fileID: 318258059}
-  fileName: 
+  trialInfo: {fileID: 1555169651}
+  betas: {fileID: 110411219}
+  fileName: opb_maze_14.xml
 --- !u!1001 &978599270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4984,30 +4987,13 @@ GameObject:
   - component: {fileID: 1282041353}
   - component: {fileID: 1282041352}
   - component: {fileID: 1282041351}
-  - component: {fileID: 1282041350}
   m_Layer: 5
   m_Name: MapCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1282041350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282041349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 663329a315cdfa66b9a5d8c77fccab7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gemCounter: {fileID: 1555169651}
-  goalText: {fileID: 0}
-  warnText: {fileID: 0}
-  gemPile: {fileID: 0}
+  m_IsActive: 1
 --- !u!114 &1282041351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5054,7 +5040,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1282041349}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -5754,6 +5740,7 @@ MonoBehaviour:
   move: {fileID: 318258059}
   maze: {fileID: 975306111}
   writer: {fileID: 1462117136}
+  map: {fileID: 975306112}
 --- !u!1001 &1463118993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6113,6 +6100,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
@@ -6141,7 +6132,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1555169650}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
@@ -6156,10 +6147,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 64
+    m_FontSize: 32
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 6
+    m_MinSize: 3
     m_MaxSize: 80
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -6167,7 +6158,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 
 --- !u!222 &1555169652
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6190,11 +6181,11 @@ RectTransform:
   m_Father: {fileID: 1282041354}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -464, y: 336}
-  m_SizeDelta: {x: 128, y: 128}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 12, y: 0}
+  m_SizeDelta: {x: 512, y: 96}
+  m_Pivot: {x: 0, y: 1}
 --- !u!1001 &1556796596
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MazeLogic : MonoBehaviour
 {
 	public GameObject player;
-	public GameObject skyCam;
-	public GameObject plus;
-	public MapLogic map;
 
 	public GameObject curHex;
 	public GameObject prevHex;
@@ -31,9 +29,15 @@ public class MazeLogic : MonoBehaviour
 
 	public Camera playerCam;
 	public Camera grayCam;
+	public Camera skyCam;
+
 	public Canvas playerCanvas;
 	public Canvas grayCanvas;
+	public Canvas mapCanvas;
 
+	public Text plus;
+
+	public MapLogic map;
 	public HUDLogic hud;
 	public LogWriter writer;
 	public SimpleMovement move;
@@ -113,6 +117,10 @@ public class MazeLogic : MonoBehaviour
 	void Update()
 	{
 		if(mode == 2 || mode == 3)
+		{
+			if(Input.GetKeyDown("space"))
+				map.DrawMap();
+		}
 			return;
 		if(waiting)
 		{
@@ -764,9 +772,10 @@ public class MazeLogic : MonoBehaviour
 		mode = m;
 		if(m == 2 || m == 3)
 		{
-			skyCam.SetActive(true);
+			skyCam.enabled = true;
+			mapCanvas.enabled = true;
 			player.SetActive(false);
-			plus.SetActive(false);
+			plus.enabled = false;
 			map.enabled = true;
 			writer.enabled = false;
 			BroadcastMessage("SetExplore");
