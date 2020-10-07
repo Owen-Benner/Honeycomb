@@ -120,8 +120,8 @@ public class MazeLogic : MonoBehaviour
 		{
 			if(Input.GetKeyDown("space"))
 				map.DrawMap();
-		}
 			return;
+		}
 		if(waiting)
 		{
 			if(Input.GetKey("5"))
