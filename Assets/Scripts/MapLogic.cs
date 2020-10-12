@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,8 @@ public class MapLogic : MonoBehaviour
 
 	public string fileName;
 
+	private List<GameObject> arrows;
+
 	private int curTrial = 0;
 	//private int maxTrial;
 
@@ -28,6 +31,8 @@ public class MapLogic : MonoBehaviour
     void Start()
     {
         maze = gameObject.GetComponent<MazeLogic>();
+		arrows = new List<GameObject>();
+		Debug.Log("Initializing arrows");
     }
 
     // Update is called once per frame
@@ -38,6 +43,10 @@ public class MapLogic : MonoBehaviour
 
 	public void DrawMap()
 	{
+		if(arrows != null)
+			foreach(GameObject go in arrows)
+				GameObject.Destroy(go);
+
 		StreamReader reader = new StreamReader(fileName);
 		Debug.Log("Drawing");
 
@@ -115,6 +124,7 @@ public class MapLogic : MonoBehaviour
 					arrow.transform.position += 5 * Vector3.up;
 					arrow.transform.eulerAngles += Vector3.up * (dir - 60);
 					arrow.SetActive(true);
+					arrows.Add(arrow);
 
 					GameObject num = Instantiate(number, hex.transform);
 					string numText = lineArr[1].Split('.')[1].Split(':')[0];
@@ -125,6 +135,7 @@ public class MapLogic : MonoBehaviour
 						* Mathf.Cos(dir * Mathf.Deg2Rad) * Vector3.forward;
 					num.transform.position += 5 * Vector3.up;
 					num.SetActive(true);
+					arrows.Add(num);
 				}
 				else if(lineArr[0] == "Start_Choice")
 				{

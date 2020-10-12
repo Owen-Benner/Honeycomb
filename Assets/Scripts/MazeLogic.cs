@@ -118,7 +118,12 @@ public class MazeLogic : MonoBehaviour
 	{
 		if(mode == 2 || mode == 3)
 		{
-			if(Input.GetKeyDown("space"))
+			if(gray)
+			{
+				map.DrawMap();
+				gray = false;
+			}
+			else if(Input.GetKeyDown("space"))
 				map.DrawMap();
 			return;
 		}
@@ -401,6 +406,7 @@ public class MazeLogic : MonoBehaviour
 			}
 			else if(rightNextInc)
 			{
+				Debug.Log("Right following incorrect");
 				if(!zeroCase)
 					goalDir = Mathf.CeilToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
@@ -414,6 +420,7 @@ public class MazeLogic : MonoBehaviour
 				if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
 					|| rightFacing == lastFacing - 3)
 				{
+					Debug.Log("Switching to left");
 					rightNextInc = !rightNextInc;
 
 					if(!zeroCase)
@@ -439,6 +446,7 @@ public class MazeLogic : MonoBehaviour
 			}
 			else // Go left
 			{
+				Debug.Log("Left following incorrect");
 				if(!zeroCase)
 					goalDir = Mathf.FloorToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
@@ -452,6 +460,7 @@ public class MazeLogic : MonoBehaviour
 				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
 					|| leftFacing == lastFacing - 3)
 				{
+					Debug.Log("Switching to right");
 					rightNextInc = !rightNextInc;
 
 					if(!zeroCase)
@@ -611,6 +620,7 @@ public class MazeLogic : MonoBehaviour
 
 		if(forceChoice)
 		{
+			Debug.Log("Force choice");
 			if(rightCorrect)
 				leftFacing = -1;
 			else
@@ -732,6 +742,10 @@ public class MazeLogic : MonoBehaviour
 		}
 		else
 		{
+			SetChoices(curHex.GetComponent<HexLogic>().column,
+				curHex.GetComponent<HexLogic>().row);
+			curHex.BroadcastMessage("SetGray");
+
 			if(first)
 			{
 				first = false;
@@ -742,10 +756,6 @@ public class MazeLogic : MonoBehaviour
 				choosing = true;
 				choiceStartTime = Time.time;
 			}
-		
-			SetChoices(curHex.GetComponent<HexLogic>().column,
-				curHex.GetComponent<HexLogic>().row);
-			curHex.BroadcastMessage("SetGray");
 		}
 	}
 
@@ -779,7 +789,7 @@ public class MazeLogic : MonoBehaviour
 			map.enabled = true;
 			writer.enabled = false;
 			BroadcastMessage("SetExplore");
-			map.DrawMap();
+			//map.DrawMap();
 			//this.enabled = false;
 		}
 	}
@@ -903,7 +913,6 @@ public class MazeLogic : MonoBehaviour
 		curHex = hex;
 		move.StartTrial(hex.transform.position.x,
 			hex.transform.position.z);
-		writer.WriteTrialStart();
 		choosing = true;
 		choiceStartTime = Time.time;
 		move.SetCanMove(true);
@@ -912,6 +921,7 @@ public class MazeLogic : MonoBehaviour
 			UpdateHexes();
 		else
 			BroadcastMessage("SetExplore");
+		writer.WriteTrialStart(beta);
 		hud.ClearGoal();
 		move.SetFacing(GetHeadingToCenter());
 		move.SnapRot();

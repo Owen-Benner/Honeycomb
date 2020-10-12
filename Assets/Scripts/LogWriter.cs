@@ -109,7 +109,7 @@ public class LogWriter : MonoBehaviour
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
-	public void WriteTrialStart()
+	public void WriteTrialStart(int beta)
 	{
 		trialStart = Time.time;
 		int trial = maze.trial;
@@ -120,7 +120,7 @@ public class LogWriter : MonoBehaviour
 				.column.ToString() + "-"
 				+ maze.startHexes[trial].GetComponent<HexLogic>()
 				.row.ToString() + spc
-				+ (maze.betas[trial, 0] * 60).ToString() + spc
+				+ (beta * 60).ToString() + spc
 				+ string.Format("{0:N3}", Time.time - runStart));
 		else if(mode == 0)
 			writer.WriteLine("Trial " + trial.ToString() + ":" + spc
