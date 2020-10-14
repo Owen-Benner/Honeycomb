@@ -210,6 +210,7 @@ public class MazeLogic : MonoBehaviour
 
 			if(betas[trial, moveCounter] > 0)
 			{
+				Debug.Log("Correct, going right");
 				// TODO: Adjust for float rounding errors? Done?
 				if(!zeroCase)
 					goalDir = Mathf.CeilToInt(goalDirExact / 60);
@@ -227,6 +228,7 @@ public class MazeLogic : MonoBehaviour
 				if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
 					|| rightFacing == lastFacing - 3)
 				{
+					Debug.Log("Switching to left");
 					//holdBeta = true;
 
 					/*
@@ -264,6 +266,7 @@ public class MazeLogic : MonoBehaviour
 					if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
 						|| leftFacing == lastFacing - 3)
 					{
+						Debug.Log("Forcing");
 						holdBeta = true;
 						forceChoice = true;
 					}
@@ -281,6 +284,7 @@ public class MazeLogic : MonoBehaviour
 			}
 			else if(betas[trial, moveCounter] < 0)
 			{
+				Debug.Log("Correct, going left");
 				if(!zeroCase)
 					goalDir = Mathf.FloorToInt(goalDirExact / 60);
 				goalDir = (goalDir + 6) % 6;
@@ -297,6 +301,7 @@ public class MazeLogic : MonoBehaviour
 				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
 					|| leftFacing == lastFacing - 3)
 				{
+					Debug.Log("Switching to right");
 					//holdBeta = true;
 
 					/*
@@ -334,6 +339,7 @@ public class MazeLogic : MonoBehaviour
 					if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
 						|| rightFacing == lastFacing - 3)
 					{
+						Debug.Log("Forcing");
 						holdBeta = true;
 						forceChoice = true;
 					}

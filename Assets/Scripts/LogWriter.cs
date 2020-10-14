@@ -184,6 +184,7 @@ public class LogWriter : MonoBehaviour
 	{
 		int trial = maze.trial;
 
+		// TODO: Add original beta for forced choices
 		if(mode == 1)
 			writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
 				+ choiceNum.ToString() + ":" + spc
