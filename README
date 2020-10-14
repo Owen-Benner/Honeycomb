@@ -68,12 +68,6 @@ Output (maze):
 		TrialNum
 		TrialTime
 		RunTime
-	Action
-		Color of option chosen (1 = blue, 2 = purple)
-		isCorrect (int)
-		Alpha
-		TrialTime (exact?)
-		RunTime
 
 Output (explore):
 	Trial start

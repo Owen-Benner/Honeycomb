@@ -812,10 +812,14 @@ public class MazeLogic : MonoBehaviour
 		}
 		lastChoice = 1;
 		lastCorrect = !rightCorrect;
-		if(auto)
+
+		if(beta == 0)
+			writer.WriteForcedAction();
+		else if(auto)
 			writer.WriteAutoAction();
 		else
 			writer.WriteAction();
+
 		choosing = false;
 	}
 

@@ -157,6 +157,19 @@ public class LogWriter : MonoBehaviour
 				+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
+	public void WriteForcedAction()
+	{
+		if(mode == 1)
+			writer.WriteLine("Forced_Action " + maze.trial.ToString() + "."
+				+ choiceNum++.ToString() + ":" + spc
+				+ maze.lastChoice.ToString() + spc
+				+ BoolToString(maze.lastCorrect) + spc
+				+ string.Format("{0:N3}", maze.alpha) + spc
+				+ string.Format("{0:N3}", Time.time - trialStart) + spc
+				+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	// For explore mode
 	public void WriteAction(float dir)
 	{
 		if(mode == 0)

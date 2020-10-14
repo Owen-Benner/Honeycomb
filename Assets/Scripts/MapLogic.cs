@@ -12,6 +12,7 @@ public class MapLogic : MonoBehaviour
 	public GameObject redArrow;
 	public GameObject greenArrow;
 	public GameObject blueArrow;
+	public GameObject cyanArrow;
 	public GameObject number;
 
 	public MazeLogic maze;
@@ -60,10 +61,10 @@ public class MapLogic : MonoBehaviour
 			GameObject hex;
 			while(true)
 			{
-				Debug.Log("Loop 0");
+				//Debug.Log("Loop 0");
 				string line = reader.ReadLine();
 				string [] lineArr = line.Split(' ');
-				Debug.Log(lineArr[0]);
+				//Debug.Log(lineArr[0]);
 				if(lineArr[0] == "Trial" && int.Parse(lineArr[1].Trim(':'))
 					== curTrial)
 				{
@@ -91,11 +92,12 @@ public class MapLogic : MonoBehaviour
 			float angle = 0;
 			while(true)
 			{
-				Debug.Log("Loop 1");
+				//Debug.Log("Loop 1");
 				string line = reader.ReadLine();
 				string [] lineArr = line.Split(' ');
-				Debug.Log(lineArr[0]);
-				if(lineArr[0] == "Action" || lineArr[0] == "Auto_Action")
+				//Debug.Log(lineArr[0]);
+				if(lineArr[0] == "Action" || lineArr[0] == "Auto_Action"
+					|| lineArr[0] == "Forced_Action")
 				{
 					GameObject arrow;
 					float dir = float.Parse(lineArr[4]) + angle;
@@ -111,12 +113,20 @@ public class MapLogic : MonoBehaviour
 						arrow = Instantiate(greenArrow,
 							hex.transform);
 					}
+					else if(lineArr[0] == "Forced_Action")
+
+					{
+						Debug.Log("Cyan");
+						arrow = Instantiate(cyanArrow,
+							hex.transform);
+					}
 					else
 					{
 						Debug.Log("Blue");
 						arrow = Instantiate(blueArrow,
 							hex.transform);
 					}
+
 					arrow.transform.position += move.hexRadius / 2
 						* Mathf.Sin(dir * Mathf.Deg2Rad) * Vector3.right;
 					arrow.transform.position += move.hexRadius / 2
