@@ -184,6 +184,8 @@ public class MazeLogic : MonoBehaviour
 	public void SetChoices(int column, int row)
 	{
 		//Debug.Log("Setting");
+		
+		forceChoice = false;
 
 		// Calculate goalDir
 		Vector3 toGoal = goalHex.transform.position -
@@ -200,7 +202,8 @@ public class MazeLogic : MonoBehaviour
 			zeroCase = true;
 		}
 
-//StartLoop:
+		int originalMC = moveCounter;
+StartLoop:
 		if(lastCorrect)
 		{
 			// Find choice angles
@@ -399,6 +402,7 @@ public class MazeLogic : MonoBehaviour
 					LeftClip();
 					RightClip();
 					rightCorrect = false;
+					beta = 1;
 				}
 				else
 				{
@@ -407,6 +411,7 @@ public class MazeLogic : MonoBehaviour
 					RightClip();
 					LeftClip();
 					rightCorrect = true;
+					beta = -1;
 				}
 				rightNextInc = !rightNextInc;
 			}
@@ -631,7 +636,7 @@ public class MazeLogic : MonoBehaviour
 				leftFacing = -1;
 			else
 				rightFacing = -1;
-			beta = 0;
+			//beta = 0;
 		}
 
 		// Find choice hexes
@@ -695,24 +700,35 @@ public class MazeLogic : MonoBehaviour
 				break;
 		}
 
-		/*
 		if(forceChoice)
 		{
-			if(rightCorrect && rightHex == goalHex)
+			// If adjacent to goal
+			if(rightCorrect && rightHex == goalHex || !rightCorrect && leftHex
+				== goalHex)
 			{
 				++moveCounter;
+				if(moveCounter > betas.GetLength(1))
+					moveCounter = 0;
+				if(moveCounter == originalMC)
+				{
+					Debug.LogError("Impossible goal choice");
+					Application.Quit();
+				}
 				Debug.Log("Looping");
+				forceChoice = false;
 				goto StartLoop;
 			}
-			else if(!rightCorrect && leftHex == goalHex)
+			else if(moveCounter == originalMC)
 			{
 				++moveCounter;
+				if(moveCounter > betas.GetLength(1))
+					moveCounter = 0;
 				Debug.Log("Looping");
+				forceChoice = false;
 				goto StartLoop;
 			}
 		}
-		*/
-		forceChoice = false;
+		//forceChoice = false;
 
 		// Highlight
 		leftHex.BroadcastMessage("SetLeft");
@@ -758,7 +774,8 @@ public class MazeLogic : MonoBehaviour
 			}
 			else
 			{
-				writer.WriteChoiceStart(beta);
+				writer.WriteChoiceStart(beta, forceChoice);
+				//forceChoice = false;
 				choosing = true;
 				choiceStartTime = Time.time;
 			}
@@ -819,7 +836,7 @@ public class MazeLogic : MonoBehaviour
 		lastChoice = 1;
 		lastCorrect = !rightCorrect;
 
-		if(beta == 0)
+		if(forceChoice)
 			writer.WriteForcedAction();
 		else if(auto)
 			writer.WriteAutoAction();
@@ -847,10 +864,14 @@ public class MazeLogic : MonoBehaviour
 		}
 		lastChoice = 2;
 		lastCorrect = rightCorrect;
-		if(auto)
+
+		if(forceChoice)
+			writer.WriteForcedAction();
+		else if(auto)
 			writer.WriteAutoAction();
 		else
 			writer.WriteAction();
+
 		choosing = false;
 	}
 
@@ -931,7 +952,7 @@ public class MazeLogic : MonoBehaviour
 			UpdateHexes();
 		else
 			BroadcastMessage("SetExplore");
-		writer.WriteTrialStart(beta);
+		writer.WriteTrialStart(beta, forceChoice);
 		hud.ClearGoal();
 		move.SetFacing(GetHeadingToCenter());
 		move.SnapRot();

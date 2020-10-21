@@ -27,6 +27,7 @@ public class MapLogic : MonoBehaviour
 
 	private int curTrial = 0;
 	//private int maxTrial;
+	private int mode;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +45,8 @@ public class MapLogic : MonoBehaviour
 
 	public void DrawMap()
 	{
+		mode = move.mode;
+
 		if(arrows != null)
 			foreach(GameObject go in arrows)
 				GameObject.Destroy(go);
@@ -76,7 +79,8 @@ public class MapLogic : MonoBehaviour
 						int.Parse(coords[1])];
 					hex.BroadcastMessage("SetRight");
 					betas.enabled = true;
-					betas.text = "0: " + lineArr[3] + "\n";
+					if(mode == 3)
+						betas.text = "0: " + lineArr[3] + "\n";
 					Debug.Log("Breaking");
 					break;
 				}
@@ -100,31 +104,36 @@ public class MapLogic : MonoBehaviour
 					|| lineArr[0] == "Forced_Action")
 				{
 					GameObject arrow;
-					float dir = float.Parse(lineArr[4]) + angle;
+
+					float dir;
+					if(mode == 3)
+						dir = float.Parse(lineArr[4]) + angle;
+					else
+						dir = float.Parse(lineArr[2]);
+
+					if(mode == 2)
+					{
+						arrow = Instantiate(greenArrow, hex.transform);
+					}
 					if(lineArr[3] == "0")
 					{
 						Debug.Log("Red");
-						arrow = Instantiate(redArrow,
-							hex.transform);
+						arrow = Instantiate(redArrow, hex.transform);
 					}
 					else if(lineArr[0] == "Action")
 					{
 						Debug.Log("Green");
-						arrow = Instantiate(greenArrow,
-							hex.transform);
+						arrow = Instantiate(greenArrow, hex.transform);
 					}
 					else if(lineArr[0] == "Forced_Action")
-
 					{
 						Debug.Log("Cyan");
-						arrow = Instantiate(cyanArrow,
-							hex.transform);
+						arrow = Instantiate(cyanArrow, hex.transform);
 					}
 					else
 					{
 						Debug.Log("Blue");
-						arrow = Instantiate(blueArrow,
-							hex.transform);
+						arrow = Instantiate(blueArrow, hex.transform);
 					}
 
 					arrow.transform.position += move.hexRadius / 2
@@ -152,11 +161,12 @@ public class MapLogic : MonoBehaviour
 					string [] coords = lineArr[2].Split('-');
 					hex = maze.maze[int.Parse(coords[0]),
 						int.Parse(coords[1])];
-					betas.text = betas.text + lineArr[1].Split('.')[1]
-						+ " " + lineArr[3] + "\n";
+					if(mode == 3)
+						betas.text = betas.text + lineArr[1].Split('.')[1]
+							+ " " + lineArr[3] + "\n";
 				}
 				// TODO: Make this better.
-				else if(lineArr[0] == "Frame")
+				else if(lineArr[0] == "Frame" && mode == 3)
 				{
 					angle = float.Parse(lineArr[4]) + float.Parse(lineArr[8]);
 				}

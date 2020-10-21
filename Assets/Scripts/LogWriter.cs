@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -109,28 +110,74 @@ public class LogWriter : MonoBehaviour
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
+	// For explore mode
 	public void WriteTrialStart(int beta)
 	{
 		trialStart = Time.time;
 		int trial = maze.trial;
 
-		if(mode == 1)
-			writer.WriteLine("Trial " + trial.ToString() + ":" + spc
-				+ maze.startHexes[trial].GetComponent<HexLogic>()
-				.column.ToString() + "-"
-				+ maze.startHexes[trial].GetComponent<HexLogic>()
-				.row.ToString() + spc
-				+ (beta * 60).ToString() + spc
-				+ string.Format("{0:N3}", Time.time - runStart));
-		else if(mode == 0)
-			writer.WriteLine("Trial " + trial.ToString() + ":" + spc
-				+ maze.startHexes[trial].GetComponent<HexLogic>()
-				.column.ToString() + "-"
-				+ maze.startHexes[trial].GetComponent<HexLogic>()
-				.row.ToString() + spc
-				+ string.Format("{0:N3}", Time.time - runStart));
+		writer.WriteLine("Trial " + trial.ToString() + ":" + spc
+			+ maze.startHexes[trial].GetComponent<HexLogic>()
+			.column.ToString() + "-"
+			+ maze.startHexes[trial].GetComponent<HexLogic>()
+			.row.ToString() + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
 
 		choiceNum = 0;
+	}
+
+	public void WriteTrialStart(int beta, bool forced)
+	{
+		trialStart = Time.time;
+		int trial = maze.trial;
+
+		string betaStr; // Used to differentiate forced choices
+		if(forced)
+			betaStr = "±" + Math.Abs(beta * 60).ToString();
+		else
+			betaStr = (beta * 60).ToString();
+
+		writer.WriteLine("Trial " + trial.ToString() + ":" + spc
+			+ maze.startHexes[trial].GetComponent<HexLogic>()
+			.column.ToString() + "-"
+			+ maze.startHexes[trial].GetComponent<HexLogic>()
+			.row.ToString() + spc
+			+ betaStr + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
+
+		choiceNum = 0;
+	}
+
+	// For explore mode
+	public void WriteChoiceStart(int beta)
+	{
+		int trial = maze.trial;
+
+		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
+			+ choiceNum.ToString() + ":" + spc
+			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
+			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
+	}
+
+	public void WriteChoiceStart(int beta, bool forced)
+	{
+		int trial = maze.trial;
+
+		string betaStr; // Used to differentiate forced choices
+		if(forced)
+			betaStr = "±" + Math.Abs(beta * 60).ToString();
+		else
+			betaStr = (beta * 60).ToString();
+
+		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
+			+ choiceNum.ToString() + ":" + spc
+			+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
+			+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
+			+ betaStr + spc
+			+ string.Format("{0:N3}", Time.time - trialStart) + spc
+			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
 	public void WriteAction()
@@ -178,30 +225,6 @@ public class LogWriter : MonoBehaviour
 				+ dir.ToString() + spc
 				+ string.Format("{0:N3}", Time.time - trialStart) + spc
 				+ string.Format("{0:N3}", Time.time - runStart));
-	}
-
-	public void WriteChoiceStart(int beta)
-	{
-		int trial = maze.trial;
-
-		// TODO: Add original beta for forced choices
-		if(mode == 1)
-			writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
-				+ choiceNum.ToString() + ":" + spc
-				+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
-				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
-				+ (beta * 60).ToString() + spc
-				+ string.Format("{0:N3}", Time.time - trialStart) + spc
-				+ string.Format("{0:N3}", Time.time - runStart));
-		else if(mode == 0)
-			writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
-				+ choiceNum.ToString() + ":" + spc
-				+ maze.curHex.GetComponent<HexLogic>().column.ToString() + "-"
-				+ maze.curHex.GetComponent<HexLogic>().row.ToString() + spc
-				+ string.Format("{0:N3}", Time.time - trialStart) + spc
-				+ string.Format("{0:N3}", Time.time - runStart));
-		else
-			Debug.LogError("Invalid mode.");
 	}
 
 	public void WriteGoal()
