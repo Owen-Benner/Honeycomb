@@ -9,7 +9,7 @@ Terms:
 Configuration:
 	Participant number
 	Run number
-	Mode: 0 = explore, 1 = maze
+	Mode: 0 = explore, 1 = maze, 2 = explore replay, 3 = maze replay
 	Start delay after keypress (seconds)
 	End trial delay (seconds)
 	Gray screen time (seconds)
@@ -43,19 +43,23 @@ Output (maze):
 	Trial start
 		Trial number
 		Starting hexagon number
-		Current beta
-		RunTime
-	Action
-		Color of option chosen (1 = blue, 2 = purple)
-		isCorrect (int, 0 = false, 1 = true)
-		Alpha (angle between choice dir and goal dir)
-		TrialTime (exact?)
+		Beta (all attempted)
 		RunTime
 	Choice start (doesn’t show with trial start)
 		Choice number
 		Hex number
-		Beta
+		Beta (all attempted)
 		TrialTime
+		RunTime
+	Warning
+		Choice number
+		TrialTime
+		RunTime
+	Action/Auto_Action/Forced_Action
+		Color of option chosen (1 = blue, 2 = purple)
+		isCorrect (int, 0 = false, 1 = true)
+		Alpha (angle between choice dir and goal dir)
+		TrialTime (exact?)
 		RunTime
 	On reaching goal
 		Hex number
@@ -100,18 +104,19 @@ Choice selection algorithm:
 		If incorrect choice leads off map or to prev hex, flip
 		...both choices across player-goal axis
 			Beta index advances
-			If choice flipped and still bad, force new correct
-			...choice
+			If choice flipped and still bad, try next beta
+			If new beta doesn't work, force correct choice
 	Following incorrect choice
 		Always 60 deg between choices
-		Alternate left vs right
+		Alternate left vs right within a trial
 			Start left on odd trials, right on even
-			Reset at trial start
 		If incorrect choice leads off map or to prev hex, flip
 		...both choices across player-goal axis
 			If choice flipped and still bad, force choice
 			Advance left/right continuity an extra step
 			...(different from after correct)
+		Following a 180 degree incorrect choice, do not place the
+		...correct option on the previous hex
 	When alpha == 0 following 180 degree incorrect choice, offer
 	...player a 60 degree choice, not including the hex in the
 	...direction of the goal, with both options on the side
@@ -119,3 +124,35 @@ Choice selection algorithm:
 		Advance left/right after incorrect continuity.
 	If a forced choice leads onto the goal, move to next beta and try
 	...again
+
+Config Key:
+01	Participant number
+02	Run number
+03	Mode: 0 = explore, 1 = maze
+04	Start delay after keypress (seconds)
+05	End trial delay (seconds)
+06	Gray screen time (seconds)
+07	Warning time (seconds)
+08	Choice time (seconds)
+09	Time limit (for explore mode, seconds, -1 for maze mode)
+10	Travel time between hexes (seconds)
+11	Rotations allowed per second
+12	Field of View (degrees)
+13	Number of Trials
+	Trial 0 betas (eight ints, in degrees, spaces between)
+	Trial 1 betas
+	Trial 2 betas
+	...
+	Trial 7 betas
+	Start hexes (one per trial, column-row, spaces between)
+	Goal hex (column-row)
+
+Map Key:
+	Red arrow
+		Incorrect action
+	Green arrow
+		Correct action
+	Cyan arrow
+		Forced action
+	Blue arrow
+		Automatic action (not forced)

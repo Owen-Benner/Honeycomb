@@ -143,7 +143,6 @@ public class MapLogic : MonoBehaviour
 					arrow.transform.position += 5 * Vector3.up;
 					arrow.transform.eulerAngles += Vector3.up * (dir - 60);
 					arrow.SetActive(true);
-					arrows.Add(arrow);
 
 					GameObject num = Instantiate(number, hex.transform);
 					string numText = lineArr[1].Split('.')[1].Split(':')[0];
@@ -154,6 +153,51 @@ public class MapLogic : MonoBehaviour
 						* Mathf.Cos(dir * Mathf.Deg2Rad) * Vector3.forward;
 					num.transform.position += 5 * Vector3.up;
 					num.SetActive(true);
+
+					foreach(GameObject go in arrows)
+					{
+						if(Mathf.Approximately(arrow.transform.position.x,
+							go.transform.position.x) &&
+							Mathf.Approximately(arrow.transform.position.z,
+							go.transform.position.z))
+						{
+							go.transform.position -= move.hexRadius / 6
+								* Mathf.Sin(dir * Mathf.Deg2Rad)
+								* Vector3.back;
+							go.transform.position -= move.hexRadius / 6
+								* Mathf.Cos(dir * Mathf.Deg2Rad)
+								* Vector3.right;
+
+							arrow.transform.position += move.hexRadius / 6
+								* Mathf.Sin(dir * Mathf.Deg2Rad)
+								* Vector3.back;
+							arrow.transform.position += move.hexRadius / 6
+								* Mathf.Cos(dir * Mathf.Deg2Rad)
+								* Vector3.right;
+						}
+
+						if(Mathf.Approximately(num.transform.position.x,
+							go.transform.position.x) &&
+							Mathf.Approximately(num.transform.position.z,
+							go.transform.position.z))
+						{
+							go.transform.position -= move.hexRadius / 6
+								* Mathf.Sin(dir * Mathf.Deg2Rad)
+								* Vector3.back;
+							go.transform.position -= move.hexRadius / 6
+								* Mathf.Cos(dir * Mathf.Deg2Rad)
+								* Vector3.right;
+
+							num.transform.position += move.hexRadius / 6
+								* Mathf.Sin(dir * Mathf.Deg2Rad)
+								* Vector3.back;
+							num.transform.position += move.hexRadius / 6
+								* Mathf.Cos(dir * Mathf.Deg2Rad)
+								* Vector3.right;
+						}
+					}
+
+					arrows.Add(arrow);
 					arrows.Add(num);
 				}
 				else if(lineArr[0] == "Start_Choice")
@@ -177,7 +221,7 @@ public class MapLogic : MonoBehaviour
 						int.Parse(coords[1])];
 					hex.BroadcastMessage("SetGoal");
 				}
-				else if(lineArr[0] == "Gray_Screen")
+				else if(lineArr[0] == "Gray_Screen" || lineArr[0] == "Timeout")
 					break;
 			}
 		}
@@ -186,6 +230,8 @@ public class MapLogic : MonoBehaviour
 			Debug.LogError("Error generating map!");
 			Debug.LogError(e.ToString());
 		}
+
+		reader.Close();
 	}
 
 }

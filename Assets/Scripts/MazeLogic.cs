@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -75,11 +76,12 @@ public class MazeLogic : MonoBehaviour
 	public float choiceTime;
 	public float timeLimit;
 
-	private int mode;
+	private string betaStr;
 
 	private float choiceStartTime;
 	private float timerStart = 0f;
 
+	private int mode;
 	private int beta;
 
 	private bool waiting = true;
@@ -203,6 +205,7 @@ public class MazeLogic : MonoBehaviour
 		}
 
 		int originalMC = moveCounter;
+		betaStr = "";
 StartLoop:
 		if(lastCorrect)
 		{
@@ -272,10 +275,26 @@ StartLoop:
 						Debug.Log("Forcing");
 						holdBeta = true;
 						forceChoice = true;
+
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "±" + Math.Abs(beta * 60).ToString();
+					}
+					else
+					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += (beta * -60).ToString() + "_"
+							+ (beta * 60).ToString();
 					}
 				}
 				else
+				{
 					beta = betas[trial, moveCounter];
+					if(betaStr.Length > 0)
+						betaStr += "_";
+					betaStr += (beta * 60).ToString();
+				}
 
 				/*
 				if(rightFacing == lastFacing + 3
@@ -345,9 +364,26 @@ StartLoop:
 						Debug.Log("Forcing");
 						holdBeta = true;
 						forceChoice = true;
+
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "±" + Math.Abs(beta * 60).ToString();
+					}
+					else
+					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += (beta * -60).ToString() + "_"
+							+ (beta * 60).ToString();
 					}
 				}
-				beta = betas[trial, moveCounter];
+				else
+				{
+					beta = betas[trial, moveCounter];
+					if(betaStr.Length > 0)
+						betaStr += "_";
+					betaStr += (beta * 60).ToString();
+				}
 
 				/*
 				if(leftFacing == lastFacing + 3
@@ -429,7 +465,8 @@ StartLoop:
 				RightClip();
 
 				if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-					|| rightFacing == lastFacing - 3)
+					|| rightFacing == lastFacing - 3 || leftFacing
+					== lastFacing + 3 || leftFacing == lastFacing - 3)
 				{
 					Debug.Log("Switching to left");
 					rightNextInc = !rightNextInc;
@@ -446,9 +483,19 @@ StartLoop:
 					LeftClip();
 
 					if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
+						|| leftFacing == lastFacing - 3 || rightFacing
+						== lastFacing + 3 || rightFacing == lastFacing - 3)
 					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "±60";
 						forceChoice = true;
+					}
+					else
+					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "60";
 					}
 				}
 				else
@@ -469,7 +516,8 @@ StartLoop:
 				LeftClip();
 
 				if(!CheckEdge(leftFacing) || leftFacing == lastFacing + 3
-					|| leftFacing == lastFacing - 3)
+					|| leftFacing == lastFacing - 3 || rightFacing
+					== lastFacing + 3 || rightFacing == lastFacing - 3)
 				{
 					Debug.Log("Switching to right");
 					rightNextInc = !rightNextInc;
@@ -486,9 +534,19 @@ StartLoop:
 					RightClip();
 
 					if(!CheckEdge(rightFacing) || rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
+						|| rightFacing == lastFacing - 3 || leftFacing
+						== lastFacing + 3 || leftFacing == lastFacing - 3)
 					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "±60";
 						forceChoice = true;
+					}
+					else
+					{
+						if(betaStr.Length > 0)
+							betaStr += "_";
+						betaStr += "-60";
 					}
 				}
 				else
@@ -618,6 +676,10 @@ StartLoop:
 				}
 			}
 			*/
+
+			if(betaStr.Length > 0)
+				betaStr += "_";
+			betaStr += (beta * 60).ToString();
 		}
 
 		if(!rightCorrect)
@@ -727,6 +789,10 @@ StartLoop:
 				forceChoice = false;
 				goto StartLoop;
 			}
+			else
+			{
+				betaStr += "_0";
+			}
 		}
 		//forceChoice = false;
 
@@ -741,6 +807,8 @@ StartLoop:
 			forceChoice = false;
 		}
 		*/
+
+		Debug.Log("BetaComp: " + beta + "—" + betaStr);
 	}
 
 	public void UpdateHexes()
@@ -774,12 +842,13 @@ StartLoop:
 			}
 			else
 			{
-				writer.WriteChoiceStart(beta, forceChoice);
+				writer.WriteChoiceStart(betaStr);
 				//forceChoice = false;
 				choosing = true;
 				choiceStartTime = Time.time;
 			}
 		}
+		//Debug.Log(betaStr);
 	}
 
 	public void Hit(GameObject hitObj)
@@ -928,10 +997,13 @@ StartLoop:
 
 	public void StartTrial()
 	{
+		lastFacing = -6;
+
 		if(trial % 2 == 1)
 			rightNextInc = false;
 		else
 			rightNextInc = true;
+
 		first = true;
 		gray = false;
 		writer.SetGray(false);
@@ -948,11 +1020,18 @@ StartLoop:
 		choiceStartTime = Time.time;
 		move.SetCanMove(true);
 		move.SetCanTurn(true);
+
 		if(mode == 1)
+		{
 			UpdateHexes();
+			writer.WriteTrialStart(betaStr);
+		}
 		else
+		{
 			BroadcastMessage("SetExplore");
-		writer.WriteTrialStart(beta, forceChoice);
+			writer.WriteTrialStart();
+		}
+
 		hud.ClearGoal();
 		move.SetFacing(GetHeadingToCenter());
 		move.SnapRot();

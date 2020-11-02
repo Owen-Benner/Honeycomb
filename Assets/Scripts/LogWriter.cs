@@ -111,7 +111,7 @@ public class LogWriter : MonoBehaviour
 	}
 
 	// For explore mode
-	public void WriteTrialStart(int beta)
+	public void WriteTrialStart()
 	{
 		trialStart = Time.time;
 		int trial = maze.trial;
@@ -126,16 +126,18 @@ public class LogWriter : MonoBehaviour
 		choiceNum = 0;
 	}
 
-	public void WriteTrialStart(int beta, bool forced)
+	public void WriteTrialStart(string betaStr)
 	{
 		trialStart = Time.time;
 		int trial = maze.trial;
 
+/*
 		string betaStr; // Used to differentiate forced choices
 		if(forced)
 			betaStr = "±" + Math.Abs(beta * 60).ToString();
 		else
 			betaStr = (beta * 60).ToString();
+*/
 
 		writer.WriteLine("Trial " + trial.ToString() + ":" + spc
 			+ maze.startHexes[trial].GetComponent<HexLogic>()
@@ -149,7 +151,7 @@ public class LogWriter : MonoBehaviour
 	}
 
 	// For explore mode
-	public void WriteChoiceStart(int beta)
+	public void WriteChoiceStart()
 	{
 		int trial = maze.trial;
 
@@ -161,15 +163,17 @@ public class LogWriter : MonoBehaviour
 			+ string.Format("{0:N3}", Time.time - runStart));
 	}
 
-	public void WriteChoiceStart(int beta, bool forced)
+	public void WriteChoiceStart(string betaStr)
 	{
 		int trial = maze.trial;
 
+/*
 		string betaStr; // Used to differentiate forced choices
 		if(forced)
 			betaStr = "±" + Math.Abs(beta * 60).ToString();
 		else
 			betaStr = (beta * 60).ToString();
+*/
 
 		writer.WriteLine("Start_Choice " + maze.trial.ToString() + "."
 			+ choiceNum.ToString() + ":" + spc

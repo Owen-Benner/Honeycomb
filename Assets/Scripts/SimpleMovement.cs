@@ -135,7 +135,7 @@ public class SimpleMovement : MonoBehaviour
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
 					else
-						writer.WriteChoiceStart(0);
+						writer.WriteChoiceStart();
 				}
 			}
 			else if(facing == 2 || facing == 3 || facing == 4)
@@ -147,7 +147,7 @@ public class SimpleMovement : MonoBehaviour
 					if(mode == 1)
 						mazeLogic.UpdateHexes();
 					else
-						writer.WriteChoiceStart(0);
+						writer.WriteChoiceStart();
 				}
 			}
 			else { Debug.LogError("Invalid facing: " + facing); }
