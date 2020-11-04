@@ -1602,8 +1602,8 @@ MonoBehaviour:
   hexRadius: 10
   rotateInterval: 20
   rotateCooldown: 0.33333334
-  left: 113
-  right: 101
+  left: 54
+  right: 55
   mazeLogic: {fileID: 975306111}
   mode: 1
 --- !u!4 &318258061 stripped
@@ -3316,6 +3316,7 @@ MonoBehaviour:
   hud: {fileID: 2042499248}
   writer: {fileID: 1462117136}
   move: {fileID: 318258059}
+  drawNext: 32
   moveCounter: 0
   goalDir: 0
   lastFacing: 0

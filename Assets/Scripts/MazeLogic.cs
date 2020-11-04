@@ -43,6 +43,8 @@ public class MazeLogic : MonoBehaviour
 	public LogWriter writer;
 	public SimpleMovement move;
 
+	public KeyCode drawNext;
+
 	public int[,] betas;
 
 	public int moveCounter = 0;
@@ -125,7 +127,7 @@ public class MazeLogic : MonoBehaviour
 				map.DrawMap();
 				gray = false;
 			}
-			else if(Input.GetKeyDown("space"))
+			else if(Input.GetKeyDown(drawNext))
 				map.DrawMap();
 			return;
 		}
@@ -486,9 +488,11 @@ StartLoop:
 						|| leftFacing == lastFacing - 3 || rightFacing
 						== lastFacing + 3 || rightFacing == lastFacing - 3)
 					{
+						/*
 						if(betaStr.Length > 0)
 							betaStr += "_";
 						betaStr += "±60";
+						*/
 						forceChoice = true;
 					}
 					else
@@ -537,9 +541,11 @@ StartLoop:
 						|| rightFacing == lastFacing - 3 || leftFacing
 						== lastFacing + 3 || leftFacing == lastFacing - 3)
 					{
+						/*
 						if(betaStr.Length > 0)
 							betaStr += "_";
 						betaStr += "±60";
+						*/
 						forceChoice = true;
 					}
 					else
@@ -553,133 +559,13 @@ StartLoop:
 					beta = -1;
 				rightNextInc = !rightNextInc;
 			}
-			/*
-			if(Mathf.Approximately(((float) lastFacing * 60 + 180) % 360, 
-				goalDirExact))
-			{
-				forceChoice = true;
-				if(!rightCorrect)
-				{
-					leftFacing = goalDir - 1;
-					LeftClip();
-				}
-				else
-				{
-					rightFacing = goalDir + 1;
-					RightClip();
-				}
-			}
-			else
-			*/
-			/*
-			{
-				leftFacing = Mathf.FloorToInt(goalDirExact / 60f);
-				rightFacing = leftFacing + 1; // Biased right?
-				LeftClip();
-				RightClip();
-				rightCorrect = goalDirExact % 60f > 30f; // Biased?
-
-				if(rightCorrect)
-				{
-					if(rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						--rightFacing;
-						--leftFacing;
-						RightClip();
-						LeftClip();
-					}
-					if(leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						++rightFacing;
-						++leftFacing;
-						RightClip();
-						LeftClip();
-						rightCorrect = false;
-					}
-				}
-				else
-				{
-					if(leftFacing == lastFacing + 3
-						|| leftFacing == lastFacing - 3)
-					{
-						++leftFacing;
-						++rightFacing;
-						LeftClip();
-						RightClip();
-					}
-					if(rightFacing == lastFacing + 3
-						|| rightFacing == lastFacing - 3)
-					{
-						--leftFacing;
-						--rightFacing;
-						LeftClip();
-						RightClip();
-						rightCorrect = true;
-					}
-				}
-				
-				if(rightCorrect)
-				{
-					if(!CheckEdge(leftFacing))
-						forceChoice = true;
-				}
-				else
-				{
-					if(!CheckEdge(rightFacing))
-						forceChoice = false;
-				}
-			}
-			*/
-			/*
-			// TODO: Fix cases near edge of maze
-			// If direction of goal doesn't lead into previous hex
-			if(goalDir + 3 != lastFacing && goalDir -3 != lastFacing)
-			{
-				if(rightCorrect)
-				{
-					rightFacing = goalDir;
-					leftFacing = goalDir - 1;
-					rightCorrect = true;
-
-					alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
-				}
-				else
-				{
-					leftFacing = goalDir;
-					rightFacing = goalDir + 1;
-					rightCorrect = false;
-
-					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
-				}
-			}
-			// If direction of goal leads into previous hex
-			else
-			{
-				// TODO: Fix cases where alpha ~= 0
-				if(alpha > 0)
-				{
-					rightFacing = goalDir - 1;
-					leftFacing = goalDir - 2;
-					rightCorrect = true;
-
-					alpha = CalcAlpha((float) rightFacing * 60, goalDirExact);
-				}
-				else
-				{
-					leftFacing = goalDir + 1;
-					rightFacing = goalDir + 2;
-					rightCorrect = false;
-
-					alpha = CalcAlpha((float) leftFacing * 60, goalDirExact);
-				}
-			}
-			*/
 
 			if(betaStr.Length > 0)
 				betaStr += "_";
-			betaStr += (beta * 60).ToString();
+			if(forceChoice)
+				betaStr += "±60";
+			else
+				betaStr += (beta * 60).ToString();
 		}
 
 		if(!rightCorrect)
@@ -765,11 +651,11 @@ StartLoop:
 		if(forceChoice)
 		{
 			// If adjacent to goal
-			if(rightCorrect && rightHex == goalHex || !rightCorrect && leftHex
-				== goalHex)
+			if((rightCorrect && rightHex == goalHex || !rightCorrect && leftHex
+				== goalHex) && lastCorrect)
 			{
 				++moveCounter;
-				if(moveCounter > betas.GetLength(1))
+				if(moveCounter >= betas.GetLength(1))
 					moveCounter = 0;
 				if(moveCounter == originalMC)
 				{
@@ -780,10 +666,10 @@ StartLoop:
 				forceChoice = false;
 				goto StartLoop;
 			}
-			else if(moveCounter == originalMC)
+			else if(moveCounter == originalMC && lastCorrect)
 			{
 				++moveCounter;
-				if(moveCounter > betas.GetLength(1))
+				if(moveCounter >= betas.GetLength(1))
 					moveCounter = 0;
 				Debug.Log("Looping");
 				forceChoice = false;

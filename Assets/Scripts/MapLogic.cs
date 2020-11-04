@@ -48,8 +48,11 @@ public class MapLogic : MonoBehaviour
 		mode = move.mode;
 
 		if(arrows != null)
+		{
 			foreach(GameObject go in arrows)
 				GameObject.Destroy(go);
+			arrows.Clear();
+		}
 
 		StreamReader reader = new StreamReader(fileName);
 		Debug.Log("Drawing");
@@ -80,7 +83,8 @@ public class MapLogic : MonoBehaviour
 					hex.BroadcastMessage("SetRight");
 					betas.enabled = true;
 					if(mode == 3)
-						betas.text = "0: " + lineArr[3] + "\n";
+						betas.text = "0: " + lineArr[3].Replace("_", ", ")
+							+ "\n";
 					Debug.Log("Breaking");
 					break;
 				}
@@ -206,8 +210,8 @@ public class MapLogic : MonoBehaviour
 					hex = maze.maze[int.Parse(coords[0]),
 						int.Parse(coords[1])];
 					if(mode == 3)
-						betas.text = betas.text + lineArr[1].Split('.')[1]
-							+ " " + lineArr[3] + "\n";
+						betas.text += lineArr[1].Split('.')[1] + " "
+							+ lineArr[3].Replace("_", ", ") + "\n";
 				}
 				// TODO: Make this better.
 				else if(lineArr[0] == "Frame" && mode == 3)
