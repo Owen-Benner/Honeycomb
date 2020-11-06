@@ -134,3 +134,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Logs
+*.xml
