@@ -1,6 +1,6 @@
 Participant number
 Run number
-Mode: 0 = explore, 1 = maze
+Mode: 0 = explore, 1 = maze, 2 = explore map, 3 = maze map
 Start delay after keypress (seconds)
 End trial delay (seconds)
 Gray screen time (seconds)
