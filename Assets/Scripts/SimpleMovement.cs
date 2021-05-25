@@ -252,7 +252,10 @@ public class SimpleMovement : MonoBehaviour
 
 	public void SnapPos()
 	{
-		Vector3 pos = new Vector3(destX, cc.transform.position.y, destZ);
+		Debug.Log("snapping");
+		Vector3 pos = new Vector3(mazeLogic.curHex.transform.position.x
+			+ 0.01f, cc.transform.position.y,
+			mazeLogic.curHex.transform.position.z + 0.01f);
 		cc.transform.position = pos;
 	}
 
@@ -275,7 +278,8 @@ public class SimpleMovement : MonoBehaviour
 	// Move player to new starting hex
 	public void StartTrial(float xPos, float zPos)
 	{
-		Vector3 pos = new Vector3(xPos, cc.transform.position.y, zPos);
+		Vector3 pos = new Vector3(xPos + 0.01f, cc.transform.position.y, zPos
+			+ 0.01f);
 		cc.Move(pos - cc.transform.position);
 		//Debug.Log("teleporting");
 	}
