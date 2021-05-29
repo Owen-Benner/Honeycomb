@@ -131,7 +131,8 @@ public class FileReader : MonoBehaviour
 			maze.grayTime = float.Parse(grayTimeStr);
 			maze.warnTime = float.Parse(warnTimeStr);
 			maze.choiceTime = float.Parse(choiceTimeStr);
-			maze.timeLimit = float.Parse(timeLimitStr);
+                        if(mode == 0)
+			    maze.timeLimit = float.Parse(timeLimitStr);
 		}
 		catch(Exception e)
 		{

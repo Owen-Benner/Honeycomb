@@ -139,7 +139,7 @@ public class MazeLogic : MonoBehaviour
 				StartRun();
 			}
 		}
-		else if(Time.time - timerStart >= timeLimit)
+		else if(mode == 0 && Time.time - timerStart >= timeLimit)
 		{
 			Debug.Log("Out of time, quitting.");
 			writer.WriteTimeout();
