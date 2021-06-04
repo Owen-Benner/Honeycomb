@@ -143,7 +143,7 @@ Config Key:
 	Trial 1 betas
 	Trial 2 betas
 	...
-	Trial 7 betas
+	Trial n betas
 	Start hexes (one per trial, column-row, spaces between)
 	Goal hex (column-row)
 
@@ -156,3 +156,23 @@ Map Key:
 		Forced action
 	Blue arrow
 		Automatic action (not forced)
+
+Trial Controls:
+	Begin
+		[5]
+	Turn left
+		[1]
+	Turn right
+		[3]
+	Forward (explore)
+		[2]
+	Cyan (maze)
+		[6]
+	Magenta (maze)
+		[7]
+
+Map Controls:
+	Next trial
+		[Space]
+	Quit
+		[Esc]
