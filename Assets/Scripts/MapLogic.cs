@@ -144,7 +144,7 @@ public class MapLogic : MonoBehaviour
 						* Mathf.Sin(dir * Mathf.Deg2Rad) * Vector3.right;
 					arrow.transform.position += move.hexRadius / 2
 						* Mathf.Cos(dir * Mathf.Deg2Rad) * Vector3.forward;
-					arrow.transform.position += 5 * Vector3.up;
+					//arrow.transform.position += 5 * Vector3.up;
 					arrow.transform.eulerAngles += Vector3.up * (dir - 60);
 					arrow.SetActive(true);
 
@@ -155,7 +155,7 @@ public class MapLogic : MonoBehaviour
 						* Mathf.Sin(dir * Mathf.Deg2Rad) * Vector3.right;
 					num.transform.position += move.hexRadius / 2
 						* Mathf.Cos(dir * Mathf.Deg2Rad) * Vector3.forward;
-					num.transform.position += 5 * Vector3.up;
+					//num.transform.position += 5 * Vector3.up;
 					num.SetActive(true);
 
 					foreach(GameObject go in arrows)

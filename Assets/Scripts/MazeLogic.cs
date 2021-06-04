@@ -122,6 +122,11 @@ public class MazeLogic : MonoBehaviour
 	{
 		if(mode == 2 || mode == 3)
 		{
+                    if(Input.GetKey(KeyCode.Escape))
+                    {
+                        Debug.Log("Quitting");
+                        Application.Quit();
+                    }
 			if(gray)
 			{
 				map.DrawMap();
