@@ -58,6 +58,7 @@ public class FileReader : MonoBehaviour
 			rotRateStr = reader.ReadLine();
 			fovStr = reader.ReadLine();
 
+			// Get betas for each trial
 			numTrials = int.Parse(reader.ReadLine());
 			betasArr = new string[numTrials];
 			for(int i = 0; i < betasArr.Length; ++i)
@@ -81,6 +82,7 @@ public class FileReader : MonoBehaviour
 
 	void Start()
 	{
+		// Generate file name
 		if(mode == 0)
 		{
 			writer.fileName = partStr + "_explore_" + runStr + ".xml";
@@ -131,7 +133,7 @@ public class FileReader : MonoBehaviour
 			maze.grayTime = float.Parse(grayTimeStr);
 			maze.warnTime = float.Parse(warnTimeStr);
 			maze.choiceTime = float.Parse(choiceTimeStr);
-                        if(mode == 0)
+            if(mode == 0)
 			    maze.timeLimit = float.Parse(timeLimitStr);
 		}
 		catch(Exception e)
