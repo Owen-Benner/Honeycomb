@@ -24,6 +24,7 @@ public class MapLogic : MonoBehaviour
 	public string fileName;
 
 	private List<GameObject> arrows;
+	private List<GameObject> nums;
 
 	private int curTrial = 0;
 	//private int maxTrial;
@@ -34,6 +35,7 @@ public class MapLogic : MonoBehaviour
     {
         maze = gameObject.GetComponent<MazeLogic>();
 		arrows = new List<GameObject>();
+		nums = new List<GameObject>();
 		Debug.Log("Initializing arrows");
     }
 
@@ -50,8 +52,22 @@ public class MapLogic : MonoBehaviour
 		if(arrows != null)
 		{
 			foreach(GameObject go in arrows)
+			{
 				GameObject.Destroy(go);
+				Debug.Log("Destroyed");
+			}
 			arrows.Clear();
+		}
+
+		if(nums != null)
+		{
+			foreach(GameObject go in nums)
+			{
+				GameObject.Destroy(go);
+				Debug.Log("Destroyed");
+			}
+			nums.Clear();
+			Debug.Log("Cleared");
 		}
 
 		StreamReader reader = new StreamReader(fileName);
@@ -98,7 +114,7 @@ public class MapLogic : MonoBehaviour
 			++curTrial;
 
 			float angle = 0;
-			while(true)
+			while(!reader.EndOfStream)
 			{
 				//Debug.Log("Loop 1");
 				string line = reader.ReadLine();
@@ -111,9 +127,10 @@ public class MapLogic : MonoBehaviour
 
 					float dir;
 					if(mode == 3)
-						dir = float.Parse(lineArr[4]) + angle;
+						dir = Mathf.Round(float.Parse(lineArr[4]) + angle);
 					else
 						dir = float.Parse(lineArr[2]);
+					//Debug.Log("dir: " + dir);
 
 					if(mode == 2)
 					{
@@ -150,7 +167,8 @@ public class MapLogic : MonoBehaviour
 
 					GameObject num = Instantiate(number, hex.transform);
 					string numText = lineArr[1].Split('.')[1].Split(':')[0];
-					num.GetComponent<TextMesh>().text = numText;
+					num.transform.GetChild(0).GetComponent<TextMesh>().text
+						= numText;
 					num.transform.position += move.hexRadius / 2
 						* Mathf.Sin(dir * Mathf.Deg2Rad) * Vector3.right;
 					num.transform.position += move.hexRadius / 2
@@ -165,44 +183,52 @@ public class MapLogic : MonoBehaviour
 							Mathf.Approximately(arrow.transform.position.z,
 							go.transform.position.z))
 						{
-							go.transform.position -= move.hexRadius / 6
-								* Mathf.Sin(dir * Mathf.Deg2Rad)
-								* Vector3.back;
-							go.transform.position -= move.hexRadius / 6
-								* Mathf.Cos(dir * Mathf.Deg2Rad)
-								* Vector3.right;
+							go.transform.GetChild(0).transform.position
+								-= move.hexRadius / 12 * Mathf.Sin(dir
+								* Mathf.Deg2Rad) * Vector3.back;
+							go.transform.GetChild(0).transform.position
+								-= move.hexRadius / 12 * Mathf.Cos(dir
+								* Mathf.Deg2Rad) * Vector3.right;
 
-							arrow.transform.position += move.hexRadius / 6
-								* Mathf.Sin(dir * Mathf.Deg2Rad)
-								* Vector3.back;
-							arrow.transform.position += move.hexRadius / 6
-								* Mathf.Cos(dir * Mathf.Deg2Rad)
-								* Vector3.right;
+							arrow.transform.GetChild(0).transform.position
+								+= move.hexRadius / 12 * Mathf.Sin(dir
+								* Mathf.Deg2Rad) * Vector3.back;
+							arrow.transform.GetChild(0).transform.position
+								+= move.hexRadius / 12 * Mathf.Cos(dir
+								* Mathf.Deg2Rad) * Vector3.right;
+
+							Debug.Log("Adjusted arrow");
 						}
+					}
 
+					foreach(GameObject go in nums)
+					{
 						if(Mathf.Approximately(num.transform.position.x,
 							go.transform.position.x) &&
 							Mathf.Approximately(num.transform.position.z,
 							go.transform.position.z))
 						{
-							go.transform.position -= move.hexRadius / 6
-								* Mathf.Sin(dir * Mathf.Deg2Rad)
-								* Vector3.back;
-							go.transform.position -= move.hexRadius / 6
-								* Mathf.Cos(dir * Mathf.Deg2Rad)
-								* Vector3.right;
+							go.transform.GetChild(0).transform.position
+								-= move.hexRadius / 12 * Mathf.Sin(dir
+								* Mathf.Deg2Rad) * Vector3.back;
+							go.transform.GetChild(0).transform.position
+								-= move.hexRadius / 12 * Mathf.Cos(dir
+								* Mathf.Deg2Rad) * Vector3.right;
 
-							num.transform.position += move.hexRadius / 6
-								* Mathf.Sin(dir * Mathf.Deg2Rad)
-								* Vector3.back;
-							num.transform.position += move.hexRadius / 6
-								* Mathf.Cos(dir * Mathf.Deg2Rad)
-								* Vector3.right;
+							num.transform.GetChild(0).transform.position
+								+= move.hexRadius / 12 * Mathf.Sin(dir
+								* Mathf.Deg2Rad) * Vector3.back;
+							num.transform.GetChild(0).transform.position
+								+= move.hexRadius / 12 * Mathf.Cos(dir
+								* Mathf.Deg2Rad) * Vector3.right;
+
+							Debug.Log("Adjusted number");
 						}
 					}
 
 					arrows.Add(arrow);
-					arrows.Add(num);
+					nums.Add(num);
+					Debug.Log("Added to list");
 				}
 				else if(lineArr[0] == "Start_Choice")
 				{
@@ -226,7 +252,10 @@ public class MapLogic : MonoBehaviour
 					hex.BroadcastMessage("SetGoal");
 				}
 				else if(lineArr[0] == "Gray_Screen" || lineArr[0] == "Timeout")
+				{
+					Debug.Log(lineArr[0]);
 					break;
+				}
 			}
 		}
 		catch(Exception e)

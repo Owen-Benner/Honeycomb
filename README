@@ -157,6 +157,11 @@ Map Key:
 	Blue arrow
 		Automatic action (not forced)
 
+	Betas:
+		Each beta (in degrees) checked, in order
+		- for left, ± for both tried
+		0 for forced choice
+
 Trial Controls:
 	Begin
 		[5]
